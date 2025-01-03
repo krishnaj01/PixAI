@@ -15,7 +15,11 @@ const AppContextProvider = (props) => {
     const { setUser } = useContext(UserContext);
 
     const [image, setImage] = useState(assets.sample_img_1);
+    const [loading, setLoading] = useState(false);
     const [isImageLoaded, setIsImageLoaded] = useState(false);
+    const [checkingPrompt, setCheckingPrompt] = useState(false);
+    const [generating, setGenerating] = useState(false);
+    const [checkingNSFW, setCheckingNSFW] = useState(false);
 
     const [token, setToken] = useState(null);
     const [credit, setCredit] = useState(false);
@@ -74,7 +78,7 @@ const AppContextProvider = (props) => {
         setUser(null);
         navigate('/');
     }
-    
+
     const generateImage = async (prompt, negative_prompt) => {
         try {
             const { data } = await axios.post(`${backendUrl}/api/image/generate-image`, { prompt, negative_prompt }, {
@@ -99,28 +103,42 @@ const AppContextProvider = (props) => {
             toast.error(error.message);
         }
     }
-    
-    // const checkPrompt = async (prompt, negative_prompt) => {
-    //     try {
-    //         const { data } = await axios.post(`${backendUrl}/api/image/check-prompt`, { prompt }, {
-    //             headers: { token }
-    //         })
 
-    //         if (data.success) {
-    //             const image = await generateImage(prompt, negative_prompt);
-    //             if (image) {
-    //                 setIsImageLoaded(true);
-    //                 setImage(image);
-    //             }
-    //         } else {
-    //             toast.error(data.message);
-    //         }
+    const checkPrompt = async (prompt, negative_prompt) => {
+        try {
+            setCheckingPrompt(true);
+            const { data } = await axios.post(`${backendUrl}/api/image/check-prompt`, { prompt }, {
+                headers: { token }
+            })
+            setCheckingPrompt(false);
 
-    //     } catch (error) {
-    //         console.log(error);
-    //         toast.error(error.message);
-    //     }
-    // }
+            if (data.success) {
+                setGenerating(true);
+                const image = await generateImage(prompt, negative_prompt);
+                if (image) {
+                    setCheckingNSFW(true);
+                    const nsfwCheck = await axios.post(`${backendUrl}/api/image/check-nsfw`, { image }, {
+                        headers: { token }
+                    });
+
+                    if (nsfwCheck.data.success) {
+                        setIsImageLoaded(true);
+                        setImage(image);
+                    } else {
+                        toast.error(nsfwCheck.data.message);
+                    }
+                    setCheckingNSFW(false);
+                }
+                setGenerating(false);
+            } else {
+                toast.error(data.message);
+            }
+
+        } catch (error) {
+            console.log(error);
+            toast.error(error.message);
+        }
+    }
 
 
     const saveImageToCloudinary = async (prompt, negative_prompt, image, shared) => {
@@ -141,6 +159,11 @@ const AppContextProvider = (props) => {
                 navigate('/plans');
             }
         }
+    }
+
+    const resetImageData = () => {
+        setIsImageLoaded(false);
+        setImage(assets.sample_img_1);
     }
 
     useEffect(() => {
@@ -165,7 +188,7 @@ const AppContextProvider = (props) => {
 
     const scrollbarProperties = '[&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-thumb]:rounded-full'
 
-    const values = { token, setToken, credit, setCredit, image, setImage, isImageLoaded, setIsImageLoaded, showImage, setShowImage, imageDetails, setImageDetails, backendUrl, getTokenVal, loadTotalUserData, logout, generateImage, viewportWidth, saveImageToCloudinary, navigate, scrollbarProperties }
+    const values = { checkPrompt, token, setToken, credit, setCredit, image, setImage, isImageLoaded, setIsImageLoaded, showImage, setShowImage, imageDetails, setImageDetails, backendUrl, getTokenVal, loadTotalUserData, logout, generateImage, viewportWidth, saveImageToCloudinary, navigate, scrollbarProperties, checkingPrompt, generating, checkingNSFW, loading, setLoading, resetImageData }
 
     return (
         <AppContext.Provider value={values}>

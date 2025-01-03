@@ -11,9 +11,7 @@ import axios from 'axios'
 const ProfilePage = () => {
 
   const { user } = useContext(UserContext);
-  const { credit, token, backendUrl, scrollbarProperties, viewportWidth } = useContext(AppContext);
-
-  const [loading, setLoading] = useState(false)
+  const { credit, token, backendUrl, scrollbarProperties, viewportWidth,loading, setLoading, resetImageData } = useContext(AppContext);
 
   const [userSavedImages, setUserSavedImages] = useState([]);
   const [userSharedImages, setUserSharedImages] = useState([]);
@@ -31,14 +29,10 @@ const ProfilePage = () => {
     setSearchTimeout(
       setTimeout(() => {
         const sharedSearchResults = userSharedImages.filter((image) =>
-          (image.authorName.toLowerCase().includes(searchText.toLowerCase()) ||
-            image.prompt.toLowerCase().includes(searchText.toLowerCase())) && image.shared
-        );
+          (image.prompt.toLowerCase().includes(searchText.toLowerCase())) && image.shared);
 
         const savedSearchResults = userSavedImages.filter((image) =>
-          (image.authorName.toLowerCase().includes(searchText.toLowerCase()) ||
-            image.prompt.toLowerCase().includes(searchText.toLowerCase())) && !image.shared
-        );
+          (image.prompt.toLowerCase().includes(searchText.toLowerCase())) && !image.shared);
 
         setSearchedSharedImages(sharedSearchResults);
         setSearchedSavedImages(savedSearchResults);
@@ -76,6 +70,7 @@ const ProfilePage = () => {
     }
 
     fetchImages();
+    resetImageData();
   }, []);
 
 

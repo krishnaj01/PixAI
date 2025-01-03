@@ -1,60 +1,129 @@
 if (process.env.NODE_ENV !== "production") {
     await import('dotenv/config');
 }
-// import FormData from "form-data";
 import userModel from "../models/userModel.js";
-// import OpenAI from 'openai';
 import axios from "axios";
 import { cloudinary } from '../config/cloudinary.js'
 import imageModel from "../models/imageModel.js";
 
-// import { google } from 'googleapis';
+// import { Buffer } from 'buffer';
+// import * as tf from '@tensorflow/tfjs';
+// // import nsfw from 'nsfwjs';
+// import {createCanvas, loadImage} from 'canvas'
+
+// import fs from 'fs';
+// import NSFWFilter from 'nsfw-filter';
+// import NSFWFilter from 'nsfw-filter';
+// const nsfw = require('nsfw-filter');
+// const nsfw = await import('nsfw-filter');
+// import path from 'path';
+
+// import FormData from "form-data";
+// import OpenAI from 'openai';
 // const openai = new OpenAI({
 //     apiKey: process.env.OPENAI_API_KEY,
 // });
 
-// const checkPrompt = async (req, res) => {
-//     try {
-//         const { userId, prompt } = req.body;
+// import { google } from 'googleapis';
+const checkPrompt = async (req, res) => {
+    try {
+        const { userId, prompt } = req.body;
 
-//         if (!userId || !prompt) {
-//             return res.json({ success: false, message: 'Missing Details' });
-//         }
+        if (!userId || !prompt) {
+            return res.json({ success: false, message: 'Missing Details' });
+        }
 
-//         const client = await google.discoverAPI(process.env.PERSPECTIVE_API_URL);
+        // const client = await google.discoverAPI(process.env.PERSPECTIVE_API_URL);
 
-//         const analyzeRequest = {
-//             comment: {
-//                 text: prompt,
-//             },
-//             languages: ['en'],
-//             requestedAttributes: {
-//                 PROFANITY: {},
-//                 SEXUALLY_EXPLICIT: {}
-//             }
-//         };
+        const analyzeRequest = {
+            comment: {
+                text: prompt,
+            },
+            languages: ['en'],
+            requestedAttributes: {
+                PROFANITY: {},
+                SEXUALLY_EXPLICIT: {}
+            }
+        };
 
-//         client.comments.analyze({
-//             key: process.env.GOOGLE_API_KEY_PERSPECTIVE_API,
-//             resource: analyzeRequest,
-//         },
-//             (err, response) => {
-//                 if(err){
-//                     return res.json({success: false, message: err});
-//                 }
-//                 const profanitySummaryScoreValue = response.data.attributeScores.PROFANITY.summaryScore.value;
-//                 const sexuallyExplicitSummaryScoreValue = response.data.attributeScores.SEXUALLY_EXPLICIT.summaryScore.value;
+        const { data } = await axios.post(process.env.PERSPECTIVE_API_URL, analyzeRequest, {
+            params: {
+                key: process.env.GOOGLE_API_KEY_PERSPECTIVE_API
+            }
+        });
 
-//                 if(profanitySummaryScoreValue > 0.9 || sexuallyExplicitSummaryScoreValue > 0.8){
-//                     return res.json({success: false, message:'Inappropriate content detected. Please try again.'})
-//                 }
-//                 res.json({success: true});
-//             }
-//         );
-//     } catch (error) {
-//         res.json({ success: false, message: error.message });
-//     }
-// }
+        const profanityScore = data.attributeScores.PROFANITY.summaryScore.value;
+        const sexuallyExplicitScore = data.attributeScores.SEXUALLY_EXPLICIT.summaryScore.value;
+
+        if (profanityScore > 0.5 || sexuallyExplicitScore > 0.4) {
+            return res.json({ success: false, message: 'Inappropriate content detected. Please try again.' })
+        }
+        res.json({ success: true });
+
+        // client.comments.analyze({
+        //     key: process.env.GOOGLE_API_KEY_PERSPECTIVE_API,
+        //     resource: analyzeRequest,
+        // },
+        //     (err, response) => {
+        //         if(err){
+        //             return res.json({success: false, message: err});
+        //         }
+        //         const profanitySummaryScoreValue = response.data.attributeScores.PROFANITY.summaryScore.value;
+        //         const sexuallyExplicitSummaryScoreValue = response.data.attributeScores.SEXUALLY_EXPLICIT.summaryScore.value;
+
+        //         if(profanitySummaryScoreValue > 0.9 || sexuallyExplicitSummaryScoreValue > 0.8){
+        //             return res.json({success: false, message:'Inappropriate content detected. Please try again.'})
+        //         }
+        //         res.json({success: true});
+        //     }
+        // );
+    } catch (error) {
+        res.json({ success: false, message: error.message });
+    }
+}
+
+const checkNSFW = async (req, res) => {
+    try {
+        const { userId, image } = req.body;
+        if (!userId || !image) {
+            return res.json({ success: false, message: 'Missing Details' });
+        }
+
+        const img = await cloudinary.uploader.upload(image, {
+            folder: 'PixAI',
+            allowedFormats: ['jpeg', 'jpg', 'png']
+        });
+
+        const imgURL = img.secure_url;
+
+        const options = {
+            method: 'POST',
+            url: 'https://nsfw-images-detection-and-classification.p.rapidapi.com/adult-content',
+            headers: {
+                'x-rapidapi-key': process.env.X_RAPID_API_KEY,
+                'x-rapidapi-host': 'nsfw-images-detection-and-classification.p.rapidapi.com',
+                'Content-Type': 'application/json'
+            },
+            data: {
+                url: imgURL
+            }
+        };
+
+        const response = await axios.request(options);
+
+        const match = imgURL.match(/PixAI\/[^.]+/);
+        const filename = match[0];
+        await cloudinary.uploader.destroy(filename);
+
+        if (response.data.unsafe) {
+            return res.json({ success: false, message: 'Inappropriate content detected. Please try again.' });
+        }
+        res.json({success: true});
+
+    } catch (error) {
+        res.json({ success: false, message: error.message });
+    }
+}
 
 const generateImage = async (req, res) => {
     try {
@@ -145,7 +214,7 @@ const generateImage = async (req, res) => {
             method: 'POST',
             url: 'https://imageai-generator.p.rapidapi.com/image',
             headers: {
-                'x-rapidapi-key': process.env.X_RAPID_IMAGE_GENERATION_API_KEY,
+                'x-rapidapi-key': process.env.X_RAPID_API_KEY,
                 'x-rapidapi-host': 'imageai-generator.p.rapidapi.com',
                 'Content-Type': 'application/json'
             },
@@ -198,12 +267,32 @@ const getUserImages = async (req, res) => {
     }
 }
 
+// let nsfwModel;
+
+// const checkImage = async (req, res) => {
+//     try {
+//         const { userId, image } = req.body;
+
+//         if (!userId || !image) {
+//             return res.json({ success: false, message: 'Missing Details' });
+//         }
+
+//         // if(!nsfwModel){
+//         //     // nsfwModel = await
+//         // }
+
+
+//     } catch (error) {
+//         res.json({ success: false, message: error.message });
+//     }
+// }
+
 const saveToCloudinary = async (req, res) => {
 
     try {
         const { userId, prompt, negative_prompt, image, shared } = req.body;
 
-        if (!userId || !prompt || !image || !shared) {
+        if (!userId || !prompt || !image) {
             return res.json({ success: false, message: 'Missing Details' });
         }
 
@@ -353,4 +442,4 @@ const deleteImage = async (req, res) => {
     }
 }
 
-export { generateImage, getCommunityImages, getUserImages, saveToCloudinary, toggleShare, deleteImage };
+export { checkPrompt, generateImage, checkNSFW, getCommunityImages, getUserImages, saveToCloudinary, toggleShare, deleteImage };

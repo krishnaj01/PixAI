@@ -6,25 +6,24 @@ import AppContext from '../contexts/AppContext/AppContext.js';
 import { toast } from 'react-toastify';
 import Loader from '../components/custom/Loader.jsx';
 import { getRandomPrompt } from '../utils/index.js'
+// import NSFWFilter from 'nsfw-filter';
 
 const PlaygroundPage = () => {
-  const [loading, setLoading] = useState(false);
-  const [uploading, setUploading] = useState(false);
   const [input, setInput] = useState({ prompt: '', negative_prompt: '' });
 
-  const { generateImage, image, setImage, isImageLoaded, setIsImageLoaded, viewportWidth, saveImageToCloudinary, navigate, loadTotalUserData } = useContext(AppContext);
+  const { loading, setLoading, checkPrompt, checkingPrompt, generating, checkingNSFW, image, setImage, isImageLoaded, setIsImageLoaded, viewportWidth, saveImageToCloudinary, navigate, loadTotalUserData } = useContext(AppContext);
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     if (input.prompt) {
-      // await checkPrompt(input.prompt, input.negative_prompt);
-      const image = await generateImage(input.prompt, input.negative_prompt);
-      if (image) {
-        setIsImageLoaded(true);
-        setImage(image);
-      }
+      await checkPrompt(input.prompt, input.negative_prompt);
+      // const image = await generateImage(input.prompt, input.negative_prompt);
+      // if (image) {
+      //   setIsImageLoaded(true);
+      //   setImage(image);
+      // }
     } else {
       toast.error('Prompt Missing')
     }
@@ -44,7 +43,7 @@ const PlaygroundPage = () => {
 
   const saveImage = async (e) => {
     e.preventDefault();
-    setUploading(true);
+    setLoading(true);
     const shared = false;
     const savedImage = await saveImageToCloudinary(input.prompt, input.negative_prompt, image, shared);
     if(savedImage){
@@ -52,12 +51,12 @@ const PlaygroundPage = () => {
       loadTotalUserData();
       navigate('/profile');
     }
-    setUploading(false);
+    setLoading(false);
   }
 
   const shareImage = async (e) => {
     e.preventDefault();
-    setUploading(true);
+    setLoading(true);
     const shared = true;
     const savedImage = await saveImageToCloudinary(input.prompt, input.negative_prompt, image, shared);
     if(savedImage){
@@ -65,7 +64,7 @@ const PlaygroundPage = () => {
       loadTotalUserData();
       navigate('/community');
     }
-    setUploading(false);
+    setLoading(false);
   }
 
   const modifyImage = () => {
@@ -111,10 +110,10 @@ const PlaygroundPage = () => {
                 </div>
 
                 <div className='flex gap-5 mb-5'>
-                  <button type='submit' className='text-[#e5e5e5] bg-zinc-900 w-36 py-3 rounded-full hover:bg-zinc-700 hover:scale-105 transition-all duration-200'>
+                  <button type='submit' disabled={loading} className={`text-[#e5e5e5] bg-zinc-900 w-36 py-3 rounded-full ${!loading ? 'hover:bg-zinc-700 hover:scale-105 transition-all duration-200' : 'bg-zinc-700'}`}>
                     Generate
                   </button>
-                  <button onClick={surpriseMe} className='bg-transparent border border-zinc-900 text-black rounded-full w-36 py-2.5 hover:bg-[#0000000f] hover:scale-105 transition-all duration-200'>
+                  <button onClick={surpriseMe} disabled={loading} className={`bg-transparent border border-zinc-900 text-black rounded-full w-36 py-2.5 ${!loading ? 'hover:bg-[#0000000f] hover:scale-105 transition-all duration-200' : 'bg-[#0000000f]'}`}>
                     Surprise Me!
                   </button>
                 </div>
@@ -131,24 +130,24 @@ const PlaygroundPage = () => {
                 </div>
                 <div className='mb-5 flex items-center justify-center gap-5'>
                   <a href={image} download>
-                    <div className='bg-[#b0296e] inline-block py-3 w-36 text-center rounded-full hover:bg-[#b0296fc0] hover:scale-105 transition-all duration-200'>
+                    <div className={`bg-[#b0296e] inline-block py-3 w-36 text-center rounded-full ${!loading ? 'hover:bg-[#b0296fc0] hover:scale-105 transition-all duration-200' : 'bg-[#b0296fc0]'}`}>
                       Download
                     </div>
                   </a>
 
-                  <button onClick={shareImage} className='bg-[#f0ba58] py-3 w-52 rounded-full hover:bg-[#f0bb58c6] hover:scale-105 transition-all duration-200'>
+                  <button onClick={shareImage} disabled={loading} className={`bg-[#f0ba58] py-3 w-52 rounded-full ${!loading ? 'hover:bg-[#f0bb58c6] hover:scale-105 transition-all duration-200' : 'bg-[#f0bb58c6]'}`}>
                     Share with Community
                   </button>
 
-                  <button onClick={saveImage} className='bg-[#266bb6] py-3 w-36 rounded-full hover:bg-[#266cb6bd] hover:scale-105 transition-all duration-200'>
+                  <button onClick={saveImage} disabled={loading} className={`bg-[#266bb6] py-3 w-36 rounded-full ${!loading ? 'hover:bg-[#266cb6bd] hover:scale-105 transition-all duration-200' : 'bg-[#266cb6bd]'}`}>
                     Save to Profile
                   </button>
                 </div>
                 <div className='flex items-center justify-center gap-5 mb-7'>
-                  <button onClick={modifyImage} className='bg-transparent border border-zinc-900 text-black rounded-full w-40 py-2.5 hover:bg-[#0000000f] hover:scale-105 transition-all duration-200'>
+                  <button onClick={modifyImage} disabled={loading} className={`bg-transparent border border-zinc-900 text-black rounded-full w-40 py-2.5 ${!loading ? 'hover:bg-[#0000000f] hover:scale-105 transition-all duration-200' : 'bg-[#0000000f]'}`}>
                     Modify Prompt
                   </button>
-                  <button onClick={generateAnother} className='text-[#e5e5e5] bg-zinc-900 rounded-full w-44 py-2.5 hover:bg-zinc-700 hover:scale-105 transition-all duration-200'>
+                  <button onClick={generateAnother} disabled={loading} className={`text-[#e5e5e5] bg-zinc-900 rounded-full w-44 py-2.5 ${!loading ? 'hover:bg-zinc-700 hover:scale-105 transition-all duration-200' : 'bg-zinc-700'}`}>
                     Generate Another
                   </button>
                 </div>
@@ -161,13 +160,15 @@ const PlaygroundPage = () => {
             <div className='relative'>
               <img src={image} alt="generated-image" className='max-w-lg rounded' />
               {/* <span className={`absolute bottom-0 left-0 h-1 bg-blue-500 ${loading ? 'w-full transition-all duration-[10s]' : 'w-0'}`} /> */}
-              {(loading || uploading) &&
+              {loading &&
                 <div className='absolute inset-0 z-0 flex justify-center items-center bg-[rgba(0,0,0,0.5)] rounded-lg'>
                   <Loader />
                 </div>
               }
             </div>
-            <p className={!loading ? 'hidden' : ''}>Loading...</p>
+            <p className={!checkingPrompt ? 'hidden' : ''}>Checking Prompt...</p>
+            <p className={!generating ? 'hidden' : ''}>Generating Image...</p>
+            <p className={!checkingNSFW ? 'hidden' : ''}>Checking for Inappropriate Content...</p>
           </section>
         </form>
       }
@@ -179,13 +180,15 @@ const PlaygroundPage = () => {
             <div className='relative'>
               <img src={image} alt="generated-image" className='max-w-xs sm:max-w-md md:max-w-lg rounded' />
               {/* <span className={`absolute bottom-0 left-0 h-1 bg-blue-500 ${loading ? 'w-full transition-all duration-[10s]' : 'w-0'}`} /> */}
-              {(loading || uploading) &&
+              {loading &&
                 <div className='absolute inset-0 z-0 flex justify-center items-center bg-[rgba(0,0,0,0.5)] rounded-lg'>
                   <Loader />
                 </div>
               }
             </div>
-            <p className={!loading ? 'hidden' : ''}>Loading...</p>
+            <p className={!checkingPrompt ? 'hidden' : ''}>Checking Prompt...</p>
+            <p className={!generating ? 'hidden' : ''}>Generating Image...</p>
+            <p className={!checkingNSFW ? 'hidden' : ''}>Checking for Inappropriate Content...</p>
           </section>
 
           <section className={`w-full flex flex-col justify-center max-w-xl text-white text-sm mt-10 ${!isImageLoaded ? '' : 'items-center'}`}>
@@ -202,10 +205,10 @@ const PlaygroundPage = () => {
                 </div>
 
                 <div className='flex justify-center items-center gap-3 mb-5'>
-                  <button type='submit' className='text-[#e5e5e5] bg-zinc-900 w-36 py-3 rounded-full hover:bg-zinc-700 hover:scale-105 transition-all duration-200'>
+                  <button type='submit' className={`text-[#e5e5e5] bg-zinc-900 w-36 py-3 rounded-full ${!loading ? 'hover:bg-zinc-700 hover:scale-105 transition-all duration-200' : 'bg-zinc-700'}`}>
                     Generate
                   </button>
-                  <button onClick={surpriseMe} className='bg-transparent border border-zinc-900 text-black rounded-full w-32 py-2.5 hover:bg-[#0000000f] hover:scale-105 transition-all duration-200'>
+                  <button onClick={surpriseMe} className={`bg-transparent border border-zinc-900 text-black rounded-full w-32 py-2.5 ${!loading ? 'hover:bg-[#0000000f] hover:scale-105 transition-all duration-200' : 'bg-[#0000000f]'}`}>
                     Surprise Me!
                   </button>
                 </div>
@@ -222,24 +225,24 @@ const PlaygroundPage = () => {
                 </div>
                 <div className='flex justify-center items-center mb-3 gap-3'>
                   <a href={image} download>
-                    <div className='bg-[#b0296e] py-3 w-24 inline-block text-center rounded-full hover:bg-[#b0296fc0] hover:scale-105 transition-all duration-200'>
+                    <div className={`bg-[#b0296e] py-3 w-24 inline-block text-center rounded-full ${!loading ? 'hover:bg-[#b0296fc0] hover:scale-105 transition-all duration-200' : 'bg-[#b0296fc0]'}`}>
                       Download
                     </div>
                   </a>
 
-                  <button onClick={shareImage} className='bg-[#f0ba58] py-3 w-24 rounded-full hover:bg-[#f0bb58c6] hover:scale-105 transition-all duration-200'>
+                  <button onClick={shareImage} className={`bg-[#f0ba58] py-3 w-24 rounded-full ${!loading ? 'hover:bg-[#f0bb58c6] hover:scale-105 transition-all duration-200' : 'bg-[#f0bb58c6]'}`}>
                     Share
                   </button>
 
-                  <button onClick={saveImage} className='bg-[#266bb6] py-3 w-24 rounded-full hover:bg-[#266cb6bd] hover:scale-105 transition-all duration-200'>
+                  <button onClick={saveImage} className={`bg-[#266bb6] py-3 w-24 rounded-full ${!loading ? 'hover:bg-[#266cb6bd] hover:scale-105 transition-all duration-200' : 'bg-[#266cb6bd]'}`}>
                     Save
                   </button>
                 </div>
                 <div className='sm:text-base flex items-center justify-center gap-3 mb-5'>
-                  <button onClick={modifyImage} className='bg-transparent border border-zinc-900 text-black rounded-full w-32 sm:w-40 py-2.5 hover:bg-[#0000000f] hover:scale-105 transition-all duration-200'>
+                  <button onClick={modifyImage} className={`bg-transparent border border-zinc-900 text-black rounded-full w-32 sm:w-40 py-2.5 ${!loading ? 'hover:bg-[#0000000f] hover:scale-105 transition-all duration-200' : 'bg-[#0000000f]'}`}>
                     Modify Prompt
                   </button>
-                  <button onClick={generateAnother} className='text-[#e5e5e5] bg-zinc-900 rounded-full w-36 sm:w-44 py-2.5 hover:bg-zinc-700 hover:scale-105 transition-all duration-200'>
+                  <button onClick={generateAnother} className={`text-[#e5e5e5] bg-zinc-900 rounded-full w-36 sm:w-44 py-2.5 ${!loading ? 'hover:bg-zinc-700 hover:scale-105 transition-all duration-200' : 'bg-zinc-700'}`}>
                     Generate Another
                   </button>
                 </div>

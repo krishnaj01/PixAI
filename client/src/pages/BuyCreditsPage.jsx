@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { assets, plans } from '../assets/assets.js'
 import AppContext from '../contexts/AppContext/AppContext.js'
 import UserContext from '../contexts/UserContext/UserContext.js'
@@ -10,7 +10,7 @@ import axios from 'axios'
 const BuyCreditsPage = () => {
 
   const { user } = useContext(UserContext);
-  const { backendUrl, loadTotalUserData, token, navigate } = useContext(AppContext)
+  const { backendUrl, loadTotalUserData, token, navigate, resetImageData } = useContext(AppContext)
   const { setShowLogin } = useContext(LoginContext);
 
   const initializePayment = async (order, planId) => {
@@ -70,6 +70,10 @@ const BuyCreditsPage = () => {
       setShowLogin(true);
     }
   }
+
+  useEffect(() => {
+    resetImageData();
+  }, [])
 
 
   return (

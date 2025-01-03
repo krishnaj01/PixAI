@@ -8,13 +8,12 @@ import AppContext from '../contexts/AppContext/AppContext.js'
 
 const CommunityPostsPage = () => {
 
-  const [loading, setLoading] = useState(false);
   const [communityImages, setCommunityImages] = useState([]);
   const [searchedImages, setSearchedImages] = useState([]);
   const [searchText, setSearchText] = useState('');
   const [searchTimeout, setSearchTimeout] = useState(null);
 
-  const { backendUrl } = useContext(AppContext);
+  const { backendUrl, loading, setLoading, resetImageData } = useContext(AppContext);
 
   const handleSearch = (e) => {
     clearTimeout(searchTimeout);
@@ -47,8 +46,9 @@ const CommunityPostsPage = () => {
       }
       setLoading(false);
     }
-
+    
     fetchImages();
+    resetImageData();
   }, []);
 
   return (
