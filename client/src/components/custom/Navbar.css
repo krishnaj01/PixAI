@@ -12,10 +12,6 @@
     border-bottom-color: rgb(39, 39, 42);
 }
 
-.login:hover{
-    background-color: rgba(39, 39, 42, 0.9);
-}
-
 .user-mid-navbar{
     margin-left: 5rem;   
 }

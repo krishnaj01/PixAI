@@ -2,33 +2,25 @@ import logo from './logo.png'
 import logo_icon from './logo_icon.png'
 import logo_text from './logo_text.png'
 import star_icon from './star_icon.svg'
-import rating_star from './rating_star.svg'
 import sample_img_1 from './sample_img_1.png'
 import sample_img_2 from './sample_img_2.png'
-import profile_img_1 from './profile_img_1.png'
-import profile_img_2 from './profile_img_2.png'
 import step_icon_1 from './step_icon_1.svg'
 import step_icon_2 from './step_icon_2.svg'
 import step_icon_3 from './step_icon_3.svg'
-import lock_icon from './lock_icon.svg'
-import cross_icon from './cross_icon.svg'
 import star_group from './star_group.png'
 import credit_star from './credit_star.svg'
-import user_icon from './user_icon.png'
+import image404 from './404image.png'
 
 export const assets = {
   logo,
   logo_icon,
   logo_text,
   star_icon,
-  rating_star,
   sample_img_1,
   sample_img_2,
-  lock_icon,
-  cross_icon,
   star_group,
   credit_star,
-  user_icon
+  image404
 }
 
 export const stepsData = [
@@ -49,46 +41,67 @@ export const stepsData = [
   },
 ];
 
-export const testimonialsData = [
+export const guidelines = [
   {
-    image: profile_img_1,
-    name: 'Donald Jackman',
-    role: 'Graphic Designer',
-    stars: 5,
-    text: `I've been using PixAI for nearly two years, primarily for Instagram, and it has been incredibly user-friendly, making my work much easier.`
+    title: 'Appropriate Usage',
+    content: [
+      'Use the platform responsibly and in accordance with the terms of service.',
+      'Avoid generating images that include inappropriate, harmful, or offensive content.'
+    ]
   },
   {
-    image: profile_img_2,
-    name: 'Richard Nelson',
-    role: 'Content Creator',
-    stars: 4,
-    text: `I've been using PixAI for nearly two years, primarily for Instagram, and it has been incredibly user-friendly, making my work much easier.`
+    title: 'Input Guidelines',
+    content: [
+      'Be clear and specific when entering prompts.',
+      'Avoid excessively complex prompts that may lead to unexpected outputs.'
+    ],
   },
   {
-    image: profile_img_1,
-    name: 'Donald Jackman',
-    role: ' Graphic Designer',
-    stars: 5,
-    text: `I've been using PixAI for nearly two years, primarily for Instagram, and it has been incredibly user-friendly, making my work much easier.`
+    title: 'Respect Copyright and Privacy',
+    content: [
+      'Only generate and use images that comply with copyright laws.',
+      'Avoid generating images of real people without their consent.'
+    ]
   },
+  {
+    title: 'Account and Personal Information',
+    content: [
+      'Use secure passwords while account registration.',
+      'Avoid sharing personal or sensitive information on the platform.'
+    ]
+  },
+  {
+    title: 'Downloading and Sharing',
+    content: [
+      'Ensure that downloaded images are used for personal, non-commercial purposes, unless otherwise specified.',
+      'Credit the platform if sharing generated images publicly, especially on social media or professional platforms.'
+    ]
+  },
+  {
+    title: 'Environmental Responsibility',
+    content: [
+      'Avoid spamming the system with repeated or unnecessary requests to ensure fair resource allocation for all users.',
+      'Focus on crafting purposeful and well-thought-out prompts to generate high-quality images efficiently.'
+    ]
+  }
 ]
 
 export const plans = [
   {
     id: 'Basic',
-    price: 10,
+    price: 99,
     credits: 100,
     desc: 'Best for personal use.'
   },
   {
     id: 'Advanced',
-    price: 50,
+    price: 449,
     credits: 500,
     desc: 'Best for professional use.'
   },
   {
     id: 'Business',
-    price: 250,
+    price: 4199,
     credits: 5000,
     desc: 'Best for enterprise use.'
   },

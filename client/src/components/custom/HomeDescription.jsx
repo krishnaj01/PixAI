@@ -1,6 +1,8 @@
 import React from 'react'
-import { assets } from '../../assets/assets'
+
 import { motion } from "motion/react"
+
+import { assets } from '../../assets/assets'
 
 const HomeDescription = () => {
     return (

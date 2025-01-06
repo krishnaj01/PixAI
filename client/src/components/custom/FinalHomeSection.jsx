@@ -1,6 +1,7 @@
 import React from 'react'
-import GenerateBtn from './GenerateBtn'
 import { motion } from "motion/react"
+
+import GenerateBtn from './GenerateBtn'
 
 const FinalHomeSection = () => {
   return (

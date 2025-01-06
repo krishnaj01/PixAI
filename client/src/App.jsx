@@ -1,6 +1,12 @@
 import React, { useContext } from 'react'
+
 import { Routes, Route } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify';
+
+import LoginContext from './contexts/LoginContext/LoginContext.js'
+import AppContext from './contexts/AppContext/AppContext.js';
+import UserContext from './contexts/UserContext/UserContext.js';
+
 import HomePage from './pages/HomePage.jsx'
 import PlaygroundPage from './pages/PlaygroundPage.jsx'
 import BuyCreditsPage from './pages/BuyCreditsPage.jsx'
@@ -9,30 +15,42 @@ import CommunityPostsPage from './pages/CommunityPostsPage.jsx'
 import Navbar from './components/custom/Navbar.jsx'
 import Footer from './components/custom/Footer.jsx'
 import LoginAndRegister from './components/custom/LoginAndRegister.jsx'
-import LoginContext from './contexts/LoginContext/LoginContext.js'
-import AppContext from './contexts/AppContext/AppContext.js';
 import ImageModal from './components/custom/ImageModal.jsx';
-import UserContext from './contexts/UserContext/UserContext.js';
+import VerifyEmail from './components/custom/VerifyEmail.jsx';
+import ForgotPassword from './components/custom/ForgotPassword.jsx';
+import ResetPasswordPage from './pages/ResetPasswordPage.jsx';
+import NotFoundPage from './pages/NotFoundPage.jsx';
 
 const App = () => {
 
-    const { showLogin } = useContext(LoginContext);
+    const { showLogin, showVerifyEmail, showForgotPassword } = useContext(LoginContext);
+    const { user } = useContext(UserContext);
     const { showImage } = useContext(AppContext);
-    const {user} = useContext(UserContext);
 
     return (
         <section className='px-4 sm:px-10 md:px-14 lg:px-28 min-h-screen bg-gradient-to-b from-teal-50 to-orange-50'>
             <ToastContainer position='bottom-right' theme='dark' autoClose={3000} />
             <Navbar />
+
             {showLogin && <LoginAndRegister />}
+            {showForgotPassword && <ForgotPassword />}
+            {showVerifyEmail && <VerifyEmail />}
             {showImage && <ImageModal />}
+
             <Routes>
                 <Route path='/' element={<HomePage />} />
-                <Route path='/playground' element={<PlaygroundPage />} />
                 <Route path='/plans' element={<BuyCreditsPage />} />
-                {user && <Route path='/profile' element={<ProfilePage />} />}
                 <Route path='/community' element={<CommunityPostsPage />} />
+
+                {user && <Route path='/playground' element={<PlaygroundPage />} />}
+                {user && <Route path='/profile' element={<ProfilePage />} />}
+
+                {!user && <Route path='/reset-password/:token' element={<ResetPasswordPage />} />}
+
+                <Route path='*' element={<NotFoundPage />} />
+
             </Routes>
+
             <Footer />
         </section>
     )

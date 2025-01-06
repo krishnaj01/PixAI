@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from 'react'
-import AppContext from '../../contexts/AppContext/AppContext';
+import AppContext from '../../contexts/AppContext/AppContext.js';
 
 const Card = ({ _id, authorProfilePic, authorId, authorName, prompt, negative_prompt, imgURL, shared, imgWidth }) => {
 

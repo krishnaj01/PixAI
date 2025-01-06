@@ -1,4 +1,4 @@
-import { surpriseMePrompts } from "../assets/assets";
+import { surpriseMePrompts } from "../assets/assets.js";
 
 function getRandomPrompt(prompt) {
     const randomIdx = Math.floor(Math.random() * surpriseMePrompts.length);

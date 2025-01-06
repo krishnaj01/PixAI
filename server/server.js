@@ -1,9 +1,11 @@
 import express from 'express'
 import cors from 'cors'
+import cookieParser from 'cookie-parser'
+
 import connectDB from './config/mongodb.js'
+
 import userRouter from './routes/userRoutes.js';
 import imageRouter from './routes/imageRoutes.js';
-import cookieParser from 'cookie-parser'
 import transactionRouter from './routes/transactionRoutes.js';
 
 const app = express();
@@ -28,10 +30,6 @@ const setUpApp = async (PORT) => {
     app.get('/api/gettoken', (req, res) => {
         const tokenValue = req.cookies['jwt-token'];
         res.json({ tokenValue: tokenValue });
-    });
-
-    app.get('/api/deletecookie', (req, res) => {
-        res.clearCookie('jwt-token').json({ success: true });
     });
 
     app.get('/', (req, res) => {

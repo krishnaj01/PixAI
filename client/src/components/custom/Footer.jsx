@@ -1,9 +1,10 @@
 import React from 'react'
-import { assets } from '../../assets/assets'
-import { FaSquareInstagram } from "react-icons/fa6";
+
+import { FaSquareInstagram, FaLinkedin } from "react-icons/fa6";
 import { FaGithubSquare } from "react-icons/fa";
-import { FaLinkedin } from "react-icons/fa6";
 import { IoIosMail } from "react-icons/io";
+
+import { assets } from '../../assets/assets'
 
 const Footer = () => {
     return (

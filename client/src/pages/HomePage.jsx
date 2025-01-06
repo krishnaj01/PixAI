@@ -1,10 +1,12 @@
 import React, { useContext, useEffect } from 'react'
+
+import AppContext from '../contexts/AppContext/AppContext.js'
+
 import Header from '../components/custom/Header'
 import Steps from '../components/custom/Steps'
 import HomeDescription from '../components/custom/HomeDescription'
+import Guidelines from '../components/custom/Guidelines'
 import FinalHomeSection from '../components/custom/FinalHomeSection'
-import Testimonials from '../components/custom/Testimonials'
-import AppContext from '../contexts/AppContext/AppContext'
 
 
 const HomePage = () => {
@@ -20,7 +22,7 @@ const HomePage = () => {
       <Header />
       <Steps />
       <HomeDescription />
-      <Testimonials />
+      <Guidelines />
       <FinalHomeSection />
     </main>
   )

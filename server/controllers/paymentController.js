@@ -1,7 +1,9 @@
 if (process.env.NODE_ENV !== "production") {
     await import('dotenv/config');
 }
+
 import Razorpay from 'razorpay'
+
 import userModel from '../models/userModel.js';
 import transactionModel from '../models/transactionModel.js';
 
@@ -30,19 +32,19 @@ const paymentRazorpay = async (req, res) => {
             case 'Basic':
                 plan = 'Basic';
                 credits = 100;
-                amount = 10;
+                amount = 99;
                 break;
 
             case 'Advanced':
                 plan = 'Advanced';
                 credits = 500;
-                amount = 50;
+                amount = 449;
                 break;
 
             case 'Business':
                 plan = 'Business';
                 credits = 5000;
-                amount = 250;
+                amount = 4199;
                 break;
 
             default:

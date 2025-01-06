@@ -1,10 +1,13 @@
 import React, { useContext, useEffect, useState } from 'react'
-import Loader from '../components/custom/Loader'
-import RenderImages from '../components/custom/RenderImages'
+
 import { motion } from "motion/react"
 import { toast } from 'react-toastify'
 import axios from 'axios'
+
 import AppContext from '../contexts/AppContext/AppContext.js'
+
+import Loader from '../components/custom/Loader'
+import RenderImages from '../components/custom/RenderImages'
 
 const CommunityPostsPage = () => {
 

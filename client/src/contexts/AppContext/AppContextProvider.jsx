@@ -1,11 +1,13 @@
-import AppContext from "./AppContext.js";
 import { useContext, useEffect, useState } from "react";
-import { useNavigate } from 'react-router-dom'
-import UserContext from "../UserContext/UserContext.js";
+
 import { toast } from "react-toastify";
+import { useNavigate } from 'react-router-dom'
 import axios from 'axios';
-import { assets } from "../../assets/assets.js";
 axios.defaults.withCredentials = true;
+
+import AppContext from "./AppContext.js";
+import UserContext from "../UserContext/UserContext.js";
+import { assets } from "../../assets/assets.js";
 
 
 const AppContextProvider = (props) => {
@@ -20,6 +22,12 @@ const AppContextProvider = (props) => {
     const [checkingPrompt, setCheckingPrompt] = useState(false);
     const [generating, setGenerating] = useState(false);
     const [checkingNSFW, setCheckingNSFW] = useState(false);
+
+    const [showPassword, setShowPassword] = useState(false);
+
+    const togglePasswordVisibility = () => {
+        setShowPassword(showPassword => !showPassword);
+    };
 
     const [token, setToken] = useState(null);
     const [credit, setCredit] = useState(false);
@@ -47,9 +55,10 @@ const AppContextProvider = (props) => {
 
     const deleteTokenCookie = async () => {
         try {
-            const { data } = await axios.get(`${backendUrl}/api/deletecookie`, { withCredentials: true });
+            const { data } = await axios.post(`${backendUrl}/api/user/logout`, { withCredentials: true });
             if (data.success) {
                 setToken('');
+                toast.success(data.message);
             }
         } catch (error) {
             console.log(error);
@@ -188,7 +197,7 @@ const AppContextProvider = (props) => {
 
     const scrollbarProperties = '[&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-thumb]:rounded-full'
 
-    const values = { checkPrompt, token, setToken, credit, setCredit, image, setImage, isImageLoaded, setIsImageLoaded, showImage, setShowImage, imageDetails, setImageDetails, backendUrl, getTokenVal, loadTotalUserData, logout, generateImage, viewportWidth, saveImageToCloudinary, navigate, scrollbarProperties, checkingPrompt, generating, checkingNSFW, loading, setLoading, resetImageData }
+    const values = { checkPrompt, token, setToken, credit, setCredit, image, setImage, isImageLoaded, setIsImageLoaded, showImage, setShowImage, imageDetails, setImageDetails, backendUrl, getTokenVal, loadTotalUserData, logout, generateImage, viewportWidth, saveImageToCloudinary, navigate, scrollbarProperties, checkingPrompt, generating, checkingNSFW, loading, setLoading, resetImageData, showPassword, togglePasswordVisibility }
 
     return (
         <AppContext.Provider value={values}>

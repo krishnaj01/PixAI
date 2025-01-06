@@ -1,6 +1,8 @@
-import React, { useState } from 'react'
-import { stepsData } from '../../assets/assets'
+import React from 'react'
+
 import { motion } from "motion/react"
+
+import { stepsData } from '../../assets/assets.js'
 
 const Steps = () => {
 

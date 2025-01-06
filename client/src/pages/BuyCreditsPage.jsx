@@ -1,17 +1,19 @@
 import React, { useContext, useEffect } from 'react'
-import { assets, plans } from '../assets/assets.js'
-import AppContext from '../contexts/AppContext/AppContext.js'
-import UserContext from '../contexts/UserContext/UserContext.js'
-import LoginContext from '../contexts/LoginContext/LoginContext.js'
+
 import { motion } from "motion/react"
 import { toast } from 'react-toastify'
 import axios from 'axios'
 
+import AppContext from '../contexts/AppContext/AppContext.js'
+import LoginContext from '../contexts/LoginContext/LoginContext.js'
+import UserContext from '../contexts/UserContext/UserContext.js'
+import { assets, plans } from '../assets/assets.js'
+
 const BuyCreditsPage = () => {
 
-  const { user } = useContext(UserContext);
   const { backendUrl, loadTotalUserData, token, navigate, resetImageData } = useContext(AppContext)
   const { setShowLogin } = useContext(LoginContext);
+  const { user } = useContext(UserContext);
 
   const initializePayment = async (order, planId) => {
     const options = {
@@ -27,7 +29,7 @@ const BuyCreditsPage = () => {
         try {
           const { data } = await axios.post(`${backendUrl}/api/transaction/verify-razorpay-payment`, response, { headers: { token } });
 
-          if(data.success){
+          if (data.success) {
             loadTotalUserData();
             navigate('/');
             toast.success(data.message);
@@ -64,7 +66,7 @@ const BuyCreditsPage = () => {
   };
 
   const handleCLick = (planId) => {
-    if(user){
+    if (user) {
       paymentRazorpay(planId);
     } else {
       setShowLogin(true);
@@ -100,11 +102,14 @@ const BuyCreditsPage = () => {
               </div>
               <p className='text-base'>{plan.desc}</p>
               <p className='mt-6 text-base'>
-                <span className='text-3xl font-medium'>&#36;{plan.price}</span> / {plan.credits} credits
+                <span className='text-3xl font-medium'>&#8377;{plan.price}</span> / {plan.credits} credits
               </p>
-              <button onClick={() => handleCLick(plan.id)} className='w-full bg-gray-800 text-white mt-8 text-base rounded-md py-2.5 min-w-52 hover:bg-gray-700 hover:scale-105 transition-all duration-200'>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => handleCLick(plan.id)} className='w-full bg-gray-800 text-white mt-8 text-base rounded-md py-2.5 min-w-52 hover:bg-gray-700 transition-all duration-200'>
                 {user ? 'Purchase' : 'Get Started'}
-              </button>
+              </motion.button>
             </div>
           )
         })}

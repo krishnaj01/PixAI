@@ -1,7 +1,9 @@
 import React from 'react'
+
+import { motion } from "motion/react"
+
 import { assets } from '../../assets/assets.js'
 import GenerateBtn from './GenerateBtn.jsx'
-import { motion } from "motion/react"
 
 const Header = () => {
     return (

@@ -16,14 +16,6 @@ const connectDB = async () => {
     await mongoose.connect(`${dbURL}/pixai`)
     .then(() => {
         console.log("MONGO CONNECTION OPEN!!!");
-        // (async () => {
-        //     try {
-        //         await userModel.syncIndexes();
-        //         console.log('Indexes created successfully');
-        //     } catch (err) {
-        //         console.error('Error syncing indexes:', err);
-        //     }
-        // })();
     })
     .catch((err) => {
         console.log("MONGO CONNECTION ERROR RECEIVED!!!");

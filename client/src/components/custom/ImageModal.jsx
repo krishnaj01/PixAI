@@ -1,12 +1,16 @@
 import React, { useContext, useEffect, useState } from 'react'
+
 import { motion } from "motion/react"
-import { RxCross2 } from "react-icons/rx";
-import AppContext from '../../contexts/AppContext/AppContext'
-import { assets } from '../../assets/assets';
-import UserContext from '../../contexts/UserContext/UserContext';
 import { toast } from 'react-toastify';
-import Loader from './Loader.jsx';
 import axios from 'axios';
+
+import { RxCross2 } from "react-icons/rx";
+
+import { assets } from '../../assets/assets';
+import AppContext from '../../contexts/AppContext/AppContext.js'
+import UserContext from '../../contexts/UserContext/UserContext.js';
+
+import Loader from './Loader.jsx';
 
 const ImageModal = () => {
 
@@ -125,18 +129,18 @@ const ImageModal = () => {
                             <div className='flex flex-wrap items-center justify-end gap-5 mb-8 text-sm'>
                                 {(user && (user.userId === authorId)) &&
                                     <>
-                                        <button onClick={toggleSharedStatus} disabled={loading} className={`bg-transparent border border-zinc-900 text-black rounded-full w-56 py-2.5 ${!loading ? 'hover:bg-[#0000000f] hover:scale-105 transition-all duration-200' : 'bg-[#0000000f]'}`}>
+                                        <button onClick={toggleSharedStatus} disabled={loading} className={`border border-zinc-900 text-black rounded-full w-56 py-2.5 ${!loading ? 'bg-transparent hover:bg-[#0000000f] hover:scale-105 transition-all duration-200' : 'bg-[#0000000f]'}`}>
                                             {shared ? 'Remove from Community' : 'Share to Community'}
                                         </button>
 
-                                        <button onClick={deleteImage} disabled={loading} className={`text-[#e5e5e5] bg-zinc-900 w-36 py-3 rounded-full ${!loading ? 'hover:bg-zinc-700 hover:scale-105 transition-all duration-200' : 'bg-zinc-700'}`}>
+                                        <button onClick={deleteImage} disabled={loading} className={`text-[#e5e5e5] w-36 py-3 rounded-full ${!loading ? 'bg-zinc-900 hover:bg-zinc-700 hover:scale-105 transition-all duration-200' : 'bg-zinc-700'}`}>
                                             Delete
                                         </button>
                                     </>
                                 }
-                                {token &&
+                                {user &&
                                     <a href={imgURL} target="_blank" download>
-                                        <div className={`text-white bg-[#b0296e] inline-block py-3 w-36 text-center rounded-full ${!loading ? 'hover:bg-[#b0296fc0] hover:scale-105 transition-all duration-200' : 'bg-[#b0296fc0]'}`}>
+                                        <div className={`text-white inline-block py-3 w-36 text-center rounded-full ${!loading ? 'bg-[#b0296e] hover:bg-[#b0296fc0] hover:scale-105 transition-all duration-200' : 'bg-[#b0296fc0]'}`}>
                                             Download
                                         </div>
                                     </a>
@@ -179,18 +183,18 @@ const ImageModal = () => {
 
                         {(user && (user.userId === authorId)) &&
                             <div className='flex flex-col items-center justify-end gap-2 mb-8 text-xs'>
-                                <button onClick={toggleSharedStatus} disabled={loading} className={`bg-transparent border border-zinc-900 text-black rounded-full w-44 py-2.5 ${!loading ? 'hover:bg-[#0000000f] hover:scale-105 transition-all duration-200' : 'bg-[#0000000f]'}`}>
+                                <button onClick={toggleSharedStatus} disabled={loading} className={`border border-zinc-900 text-black rounded-full w-44 py-2.5 ${!loading ? 'bg-transparent hover:bg-[#0000000f] hover:scale-105 transition-all duration-200' : 'bg-[#0000000f]'}`}>
                                     {shared ? 'Remove from Community' : 'Share to Community'}
                                 </button>
 
                                 <div className='flex justify-center items-center gap-1'>
                                     <a href={imgURL} target="_blank" download>
-                                        <div className={`text-white bg-[#b0296e] py-3 w-24 inline-block text-center rounded-full ${!loading ? 'hover:bg-[#b0296fc0] hover:scale-105 transition-all duration-200' : 'bg-[#b0296fc0]'}`}>
+                                        <div className={`text-white py-3 w-24 inline-block text-center rounded-full ${!loading ? 'bg-[#b0296e] hover:bg-[#b0296fc0] hover:scale-105 transition-all duration-200' : 'bg-[#b0296fc0]'}`}>
                                             Download
                                         </div>
                                     </a>
 
-                                    <button onClick={deleteImage} disabled={loading} className={`text-[#e5e5e5] bg-zinc-900 w-24 py-3 rounded-full ${!loading ? 'hover:bg-zinc-700 hover:scale-105 transition-all duration-200' : 'bg-zinc-700'}`}>
+                                    <button onClick={deleteImage} disabled={loading} className={`text-[#e5e5e5] w-24 py-3 rounded-full ${!loading ? 'bg-zinc-900 hover:bg-zinc-700 hover:scale-105 transition-all duration-200' : 'bg-zinc-700'}`}>
                                         Delete
                                     </button>
                                 </div>
@@ -206,9 +210,12 @@ const ImageModal = () => {
                     </div>
                 }
 
-                <div onClick={() => setShowImage(false)} className='absolute top-3 right-3 lg:top-5 lg:right-5 cursor-pointer text-zinc-400 border border-transparent p-0.5 hover:border-zinc-600 hover:text-zinc-600 hover:scale-105 rounded-full transition-all duration-150'>
+                <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setShowImage(false)} className='absolute top-3 right-3 lg:top-5 lg:right-5 cursor-pointer text-zinc-400 border border-transparent p-0.5 hover:border-zinc-600 hover:text-zinc-600 rounded-full transition-all duration-150'>
                     <RxCross2 />
-                </div>
+                </motion.div>
             </motion.main>
         </section>
     )

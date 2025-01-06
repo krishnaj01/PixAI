@@ -1,9 +1,12 @@
 if (process.env.NODE_ENV !== "production") {
     await import('dotenv/config');
 }
-import userModel from "../models/userModel.js";
+
 import axios from "axios";
+
 import { cloudinary } from '../config/cloudinary.js'
+
+import userModel from "../models/userModel.js";
 import imageModel from "../models/imageModel.js";
 
 // import { Buffer } from 'buffer';

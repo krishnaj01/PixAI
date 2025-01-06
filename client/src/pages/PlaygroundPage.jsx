@@ -1,12 +1,13 @@
 import React, { useState, useContext } from 'react'
-import "./PlaygroundPage.css"
-import { assets } from '../assets/assets.js'
+
 import { motion } from "motion/react"
-import AppContext from '../contexts/AppContext/AppContext.js';
 import { toast } from 'react-toastify';
-import Loader from '../components/custom/Loader.jsx';
+
+import AppContext from '../contexts/AppContext/AppContext.js';
 import { getRandomPrompt } from '../utils/index.js'
-// import NSFWFilter from 'nsfw-filter';
+import { assets } from '../assets/assets.js'
+
+import Loader from '../components/custom/Loader.jsx';
 
 const PlaygroundPage = () => {
   const [input, setInput] = useState({ prompt: '', negative_prompt: '' });
@@ -101,19 +102,19 @@ const PlaygroundPage = () => {
               <>
                 <label htmlFor="prompt" className='text-black mb-1'>Prompt:</label>
                 <div className='bg-neutral-500 p-4 rounded-lg mb-4 focus-within:ring-2 focus-within:ring-stone-950 transition duration-150'>
-                  <textarea value={input.prompt} onChange={handleInput} rows={5} name="prompt" id="prompt" placeholder='Describe your vision, and let us create it for you' className='bg-transparent outline-none w-full placeholder:text-[#e0e0e087] text-color' />
+                  <textarea value={input.prompt} onChange={handleInput} rows={5} name="prompt" id="prompt" placeholder='Describe your vision, and let us create it for you' className='bg-transparent outline-none w-full placeholder:text-[#e0e0e087] text-[#e0e0e0] font-light [&::-webkit-scrollbar]:w-1.5' />
                 </div>
 
                 <label htmlFor="negative-prompt" className='text-black mb-1'>Negative Prompt:</label>
                 <div className='bg-neutral-500 p-4 rounded-lg mb-4 focus-within:ring-2 focus-within:ring-stone-950 transition duration-150'>
-                  <textarea value={input.negative_prompt} onChange={handleInput} rows={2} name="negative_prompt" id="negative-prompt" placeholder='Define things that you do not want in your image' className='bg-transparent outline-none w-full placeholder:text-[#e0e0e087] text-color' />
+                  <textarea value={input.negative_prompt} onChange={handleInput} rows={2} name="negative_prompt" id="negative-prompt" placeholder='Define things that you do not want in your image' className='bg-transparent outline-none w-full placeholder:text-[#e0e0e087] text-[#e0e0e0] font-light [&::-webkit-scrollbar]:w-1.5' />
                 </div>
 
                 <div className='flex gap-5 mb-5'>
-                  <button type='submit' disabled={loading} className={`text-[#e5e5e5] bg-zinc-900 w-36 py-3 rounded-full ${!loading ? 'hover:bg-zinc-700 hover:scale-105 transition-all duration-200' : 'bg-zinc-700'}`}>
+                  <button type='submit' disabled={loading} className={`text-[#e5e5e5] w-36 py-3 rounded-full ${!loading ? 'bg-zinc-900 hover:bg-zinc-700 hover:scale-105 transition-all duration-200' : 'bg-zinc-700'}`}>
                     Generate
                   </button>
-                  <button onClick={surpriseMe} disabled={loading} className={`bg-transparent border border-zinc-900 text-black rounded-full w-36 py-2.5 ${!loading ? 'hover:bg-[#0000000f] hover:scale-105 transition-all duration-200' : 'bg-[#0000000f]'}`}>
+                  <button onClick={surpriseMe} disabled={loading} className={`border border-zinc-900 text-black rounded-full w-36 py-2.5 ${!loading ? 'bg-transparent  hover:bg-[#0000000f] hover:scale-105 transition-all duration-200' : 'bg-[#0000000f]'}`}>
                     Surprise Me!
                   </button>
                 </div>
@@ -130,24 +131,24 @@ const PlaygroundPage = () => {
                 </div>
                 <div className='mb-5 flex items-center justify-center gap-5'>
                   <a href={image} download>
-                    <div className={`bg-[#b0296e] inline-block py-3 w-36 text-center rounded-full ${!loading ? 'hover:bg-[#b0296fc0] hover:scale-105 transition-all duration-200' : 'bg-[#b0296fc0]'}`}>
+                    <div className={`inline-block py-3 w-36 text-center rounded-full ${!loading ? 'bg-[#b0296e] hover:bg-[#b0296fc0] hover:scale-105 transition-all duration-200' : 'bg-[#b0296fc0]'}`}>
                       Download
                     </div>
                   </a>
 
-                  <button onClick={shareImage} disabled={loading} className={`bg-[#f0ba58] py-3 w-52 rounded-full ${!loading ? 'hover:bg-[#f0bb58c6] hover:scale-105 transition-all duration-200' : 'bg-[#f0bb58c6]'}`}>
+                  <button onClick={shareImage} disabled={loading} className={`py-3 w-52 rounded-full ${!loading ? 'bg-[#f0ba58] hover:bg-[#f0bb58c6] hover:scale-105 transition-all duration-200' : 'bg-[#f0bb58c6]'}`}>
                     Share with Community
                   </button>
 
-                  <button onClick={saveImage} disabled={loading} className={`bg-[#266bb6] py-3 w-36 rounded-full ${!loading ? 'hover:bg-[#266cb6bd] hover:scale-105 transition-all duration-200' : 'bg-[#266cb6bd]'}`}>
+                  <button onClick={saveImage} disabled={loading} className={`py-3 w-36 rounded-full ${!loading ? 'bg-[#266bb6] hover:bg-[#266cb6bd] hover:scale-105 transition-all duration-200' : 'bg-[#266cb6bd]'}`}>
                     Save to Profile
                   </button>
                 </div>
                 <div className='flex items-center justify-center gap-5 mb-7'>
-                  <button onClick={modifyImage} disabled={loading} className={`bg-transparent border border-zinc-900 text-black rounded-full w-40 py-2.5 ${!loading ? 'hover:bg-[#0000000f] hover:scale-105 transition-all duration-200' : 'bg-[#0000000f]'}`}>
+                  <button onClick={modifyImage} disabled={loading} className={`border border-zinc-900 text-black rounded-full w-40 py-2.5 ${!loading ? 'bg-transparent hover:bg-[#0000000f] hover:scale-105 transition-all duration-200' : 'bg-[#0000000f]'}`}>
                     Modify Prompt
                   </button>
-                  <button onClick={generateAnother} disabled={loading} className={`text-[#e5e5e5] bg-zinc-900 rounded-full w-44 py-2.5 ${!loading ? 'hover:bg-zinc-700 hover:scale-105 transition-all duration-200' : 'bg-zinc-700'}`}>
+                  <button onClick={generateAnother} disabled={loading} className={`text-[#e5e5e5] rounded-full w-44 py-2.5 ${!loading ? 'bg-zinc-900 hover:bg-zinc-700 hover:scale-105 transition-all duration-200' : 'bg-zinc-700'}`}>
                     Generate Another
                   </button>
                 </div>
@@ -196,19 +197,19 @@ const PlaygroundPage = () => {
               <>
                 <label htmlFor="prompt" className='text-black mb-1'>Prompt:</label>
                 <div className='bg-neutral-500 p-4 rounded-lg mb-4'>
-                  <textarea value={input.prompt} onChange={handleInput} rows={4} name="prompt" id="prompt" placeholder='Describe your vision, and let us create it for you' className='bg-transparent outline-none w-full text-color' />
+                  <textarea value={input.prompt} onChange={handleInput} rows={4} name="prompt" id="prompt" placeholder='Describe your vision, and let us create it for you' className='bg-transparent outline-none w-full placeholder:text-[#e0e0e087] text-[#e0e0e0] font-light [&::-webkit-scrollbar]:w-1.5' />
                 </div>
 
                 <label htmlFor="negative-prompt" className='text-black mb-1'>Negative Prompt:</label>
                 <div className='bg-neutral-500 p-4 rounded-lg mb-4'>
-                  <textarea value={input.negative_prompt} onChange={handleInput} rows={2} name="negative_prompt" id="negative-prompt" placeholder='Define things that you do not want in your image' className='bg-transparent outline-none w-full text-color' />
+                  <textarea value={input.negative_prompt} onChange={handleInput} rows={2} name="negative_prompt" id="negative-prompt" placeholder='Define things that you do not want in your image' className='bg-transparent outline-none w-full placeholder:text-[#e0e0e087] text-[#e0e0e0] font-light [&::-webkit-scrollbar]:w-1.5' />
                 </div>
 
                 <div className='flex justify-center items-center gap-3 mb-5'>
-                  <button type='submit' className={`text-[#e5e5e5] bg-zinc-900 w-36 py-3 rounded-full ${!loading ? 'hover:bg-zinc-700 hover:scale-105 transition-all duration-200' : 'bg-zinc-700'}`}>
+                  <button type='submit' className={`text-[#e5e5e5] w-36 py-3 rounded-full ${!loading ? 'bg-zinc-900 hover:bg-zinc-700 hover:scale-105 transition-all duration-200' : 'bg-zinc-700'}`}>
                     Generate
                   </button>
-                  <button onClick={surpriseMe} className={`bg-transparent border border-zinc-900 text-black rounded-full w-32 py-2.5 ${!loading ? 'hover:bg-[#0000000f] hover:scale-105 transition-all duration-200' : 'bg-[#0000000f]'}`}>
+                  <button onClick={surpriseMe} className={`border border-zinc-900 text-black rounded-full w-32 py-2.5 ${!loading ? 'bg-transparent hover:bg-[#0000000f] hover:scale-105 transition-all duration-200' : 'bg-[#0000000f]'}`}>
                     Surprise Me!
                   </button>
                 </div>
@@ -225,24 +226,24 @@ const PlaygroundPage = () => {
                 </div>
                 <div className='flex justify-center items-center mb-3 gap-3'>
                   <a href={image} download>
-                    <div className={`bg-[#b0296e] py-3 w-24 inline-block text-center rounded-full ${!loading ? 'hover:bg-[#b0296fc0] hover:scale-105 transition-all duration-200' : 'bg-[#b0296fc0]'}`}>
+                    <div className={`py-3 w-24 inline-block text-center rounded-full ${!loading ? 'bg-[#b0296e] hover:bg-[#b0296fc0] hover:scale-105 transition-all duration-200' : 'bg-[#b0296fc0]'}`}>
                       Download
                     </div>
                   </a>
 
-                  <button onClick={shareImage} className={`bg-[#f0ba58] py-3 w-24 rounded-full ${!loading ? 'hover:bg-[#f0bb58c6] hover:scale-105 transition-all duration-200' : 'bg-[#f0bb58c6]'}`}>
+                  <button onClick={shareImage} className={`py-3 w-24 rounded-full ${!loading ? 'bg-[#f0ba58] hover:bg-[#f0bb58c6] hover:scale-105 transition-all duration-200' : 'bg-[#f0bb58c6]'}`}>
                     Share
                   </button>
 
-                  <button onClick={saveImage} className={`bg-[#266bb6] py-3 w-24 rounded-full ${!loading ? 'hover:bg-[#266cb6bd] hover:scale-105 transition-all duration-200' : 'bg-[#266cb6bd]'}`}>
+                  <button onClick={saveImage} className={`py-3 w-24 rounded-full ${!loading ? 'bg-[#266bb6] hover:bg-[#266cb6bd] hover:scale-105 transition-all duration-200' : 'bg-[#266cb6bd]'}`}>
                     Save
                   </button>
                 </div>
                 <div className='sm:text-base flex items-center justify-center gap-3 mb-5'>
-                  <button onClick={modifyImage} className={`bg-transparent border border-zinc-900 text-black rounded-full w-32 sm:w-40 py-2.5 ${!loading ? 'hover:bg-[#0000000f] hover:scale-105 transition-all duration-200' : 'bg-[#0000000f]'}`}>
+                  <button onClick={modifyImage} className={`border border-zinc-900 text-black rounded-full w-32 sm:w-40 py-2.5 ${!loading ? 'bg-transparent hover:bg-[#0000000f] hover:scale-105 transition-all duration-200' : 'bg-[#0000000f]'}`}>
                     Modify Prompt
                   </button>
-                  <button onClick={generateAnother} className={`text-[#e5e5e5] bg-zinc-900 rounded-full w-36 sm:w-44 py-2.5 ${!loading ? 'hover:bg-zinc-700 hover:scale-105 transition-all duration-200' : 'bg-zinc-700'}`}>
+                  <button onClick={generateAnother} className={`text-[#e5e5e5] rounded-full w-36 sm:w-44 py-2.5 ${!loading ? 'bg-zinc-900 hover:bg-zinc-700 hover:scale-105 transition-all duration-200' : 'bg-zinc-700'}`}>
                     Generate Another
                   </button>
                 </div>

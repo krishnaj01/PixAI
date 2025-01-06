@@ -1,12 +1,16 @@
-import { assets } from '../../assets/assets.js'
-import { Link, NavLink } from 'react-router-dom'
-import "./Navbar.css"
 import { useContext, useEffect } from 'react'
+
+import "./Navbar.css"
+
+import { motion } from "motion/react"
+import { Link, NavLink } from 'react-router-dom'
+
+import { GiHamburgerMenu } from "react-icons/gi";
+
 import UserContext from '../../contexts/UserContext/UserContext.js'
 import LoginContext from '../../contexts/LoginContext/LoginContext.js'
 import AppContext from '../../contexts/AppContext/AppContext.js'
-import { GiHamburgerMenu } from "react-icons/gi";
-
+import { assets } from '../../assets/assets.js'
 
 const Navbar = () => {
 
@@ -16,7 +20,7 @@ const Navbar = () => {
 
 
     useEffect(() => {
-        if (user && viewportWidth>=720) {
+        if (user && viewportWidth >= 720) {
             const divSvgContainer = document.getElementById('profile-picture-navbar');
             divSvgContainer.innerHTML = user.profilePicture;
         }
@@ -77,9 +81,12 @@ const Navbar = () => {
                                 </div>
                                 :
                                 <div className='flex items-center gap-2 sm:gap-5 text-lg'>
-                                    <button onClick={() => setShowLogin(true)} className='bg-zinc-800 text-white py-1.5 sm:py-2 px-5 sm:px-7 rounded-full text-base hover:bg-zinc-700 hover:scale-105 login transition-all duration-200'>
+                                    <motion.button
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.95 }}
+                                        onClick={() => setShowLogin(true)} className='bg-zinc-800 text-white py-1.5 sm:py-2 px-5 sm:px-7 rounded-full text-base hover:bg-zinc-700 transition-all duration-200'>
                                         Get Started
-                                    </button>
+                                    </motion.button>
                                 </div>
                         }
                     </div>

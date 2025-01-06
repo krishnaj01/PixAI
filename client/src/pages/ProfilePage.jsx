@@ -1,17 +1,20 @@
 import React, { useContext, useState, useEffect } from 'react'
+
 import { motion } from "motion/react"
 import { toast } from 'react-toastify'
-import RenderImages from '../components/custom/RenderImages'
+import axios from 'axios'
+
 import UserContext from '../contexts/UserContext/UserContext.js'
 import AppContext from '../contexts/AppContext/AppContext'
+
 import Loader from '../components/custom/Loader.jsx'
-import axios from 'axios'
+import RenderImages from '../components/custom/RenderImages'
 
 
 const ProfilePage = () => {
 
   const { user } = useContext(UserContext);
-  const { credit, token, backendUrl, scrollbarProperties, viewportWidth,loading, setLoading, resetImageData } = useContext(AppContext);
+  const { credit, token, backendUrl, scrollbarProperties, viewportWidth, loading, setLoading, resetImageData } = useContext(AppContext);
 
   const [userSavedImages, setUserSavedImages] = useState([]);
   const [userSharedImages, setUserSharedImages] = useState([]);
