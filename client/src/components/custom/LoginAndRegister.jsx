@@ -3,6 +3,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { motion } from "motion/react"
 import { toast } from 'react-toastify';
 import axios from 'axios';
+axios.defaults.withCredentials = true;
 
 import { FiLock, FiUser, FiMail } from "react-icons/fi";
 import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
@@ -50,7 +51,7 @@ const LoginAndRegister = () => {
         try {
 
             if (currState === 'Login') {
-                const { data } = await axios.post(`${backendUrl}/api/user/login`, { email, password });
+                const { data } = await axios.post(`${backendUrl}/api/user/login`, { withCredentials: true }, { email, password });
 
                 if (data.success) {
                     setToken(data.token);
@@ -68,7 +69,7 @@ const LoginAndRegister = () => {
                     toast.error(data.message);
                 }
             } else {
-                const { data } = await axios.post(`${backendUrl}/api/user/register`, { name, email, password });
+                const { data } = await axios.post(`${backendUrl}/api/user/register`, { withCredentials: true }, { name, email, password });
 
                 if (data.success) {
                     // setToken(data.token);

@@ -3,6 +3,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import { motion } from "motion/react"
 import { toast } from 'react-toastify';
 import axios from 'axios';
+axios.defaults.withCredentials = true;
 
 import { RxCross2 } from "react-icons/rx";
 
@@ -64,7 +65,7 @@ const VerifyEmail = () => {
         try {
             if (code.every(digit => digit != '')) {
                 const verificationCode = code.join('');
-                const { data } = await axios.post(`${backendUrl}/api/user/verify-email`, { userId: tempUserId, code: verificationCode });
+                const { data } = await axios.post(`${backendUrl}/api/user/verify-email`, { withCredentials: true }, { userId: tempUserId, code: verificationCode });
 
                 if (data.success) {
                     setToken(data.token);
