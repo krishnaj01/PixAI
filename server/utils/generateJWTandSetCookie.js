@@ -13,7 +13,7 @@ export const generateJWTandSetCookie = (res, userId) => {
         httpOnly: true, // prevents XSS attacks
         // sameSite: process.env.NODE_ENV === 'production' ? 'lax' : 'strict', // prevents CSRF attacks (as my backend and frontend are on different deployment therefore lax is preferred)
         samSite: 'none',
-        // domain: process.env.DOMAIN,
+        domain: process.env.DOMAIN,
         secure: process.env.NODE_ENV === 'production', //for HTTPS
         expires: Date.now() + (1000 * 60 * 60 * 24 * 7),
         maxAge: 1000 * 60 * 60 * 24 * 7,
