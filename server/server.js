@@ -46,7 +46,7 @@ async function dotenvLoad() {
     try {
         await setUpApp(PORT);
         app.listen(PORT, () => {
-            console.log(`Serving at Port ${PORT} on http://localhost:${PORT}`);
+            console.log(`Serving on port ${PORT}`);
         });
     } catch (error) {
         console.log(error);

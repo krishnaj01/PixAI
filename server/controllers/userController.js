@@ -29,7 +29,7 @@ const registerUser = async (req, res) => {
         const salt = await bcrypt.genSalt(12);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        const profilePicture = multiavatar(`${name}`);
+        const profilePicture = multiavatar(`${email}`);
 
         const verificationToken = Math.floor(100000 + (Math.random() * 900000)).toString();
 

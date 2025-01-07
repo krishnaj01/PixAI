@@ -102,12 +102,12 @@ const PlaygroundPage = () => {
               <>
                 <label htmlFor="prompt" className='text-black mb-1'>Prompt:</label>
                 <div className='bg-neutral-500 p-4 rounded-lg mb-4 focus-within:ring-2 focus-within:ring-stone-950 transition duration-150'>
-                  <textarea value={input.prompt} onChange={handleInput} rows={5} name="prompt" id="prompt" placeholder='Describe your vision, and let us create it for you' className='bg-transparent outline-none w-full placeholder:text-[#e0e0e087] text-[#e0e0e0] font-light [&::-webkit-scrollbar]:w-1.5' />
+                  <textarea disabled={loading} value={input.prompt} onChange={handleInput} rows={5} name="prompt" id="prompt" placeholder='Describe your vision, and let us create it for you' className='bg-transparent outline-none w-full placeholder:text-[#e0e0e087] text-[#e0e0e0] font-light [&::-webkit-scrollbar]:w-1.5' />
                 </div>
 
                 <label htmlFor="negative-prompt" className='text-black mb-1'>Negative Prompt:</label>
                 <div className='bg-neutral-500 p-4 rounded-lg mb-4 focus-within:ring-2 focus-within:ring-stone-950 transition duration-150'>
-                  <textarea value={input.negative_prompt} onChange={handleInput} rows={2} name="negative_prompt" id="negative-prompt" placeholder='Define things that you do not want in your image' className='bg-transparent outline-none w-full placeholder:text-[#e0e0e087] text-[#e0e0e0] font-light [&::-webkit-scrollbar]:w-1.5' />
+                  <textarea disabled={loading} value={input.negative_prompt} onChange={handleInput} rows={2} name="negative_prompt" id="negative-prompt" placeholder='Define things that you do not want in your image' className='bg-transparent outline-none w-full placeholder:text-[#e0e0e087] text-[#e0e0e0] font-light [&::-webkit-scrollbar]:w-1.5' />
                 </div>
 
                 <div className='flex gap-5 mb-5'>
@@ -197,12 +197,12 @@ const PlaygroundPage = () => {
               <>
                 <label htmlFor="prompt" className='text-black mb-1'>Prompt:</label>
                 <div className='bg-neutral-500 p-4 rounded-lg mb-4'>
-                  <textarea value={input.prompt} onChange={handleInput} rows={4} name="prompt" id="prompt" placeholder='Describe your vision, and let us create it for you' className='bg-transparent outline-none w-full placeholder:text-[#e0e0e087] text-[#e0e0e0] font-light [&::-webkit-scrollbar]:w-1.5' />
+                  <textarea disabled={loading} value={input.prompt} onChange={handleInput} rows={4} name="prompt" id="prompt" placeholder='Describe your vision, and let us create it for you' className='bg-transparent outline-none w-full placeholder:text-[#e0e0e087] text-[#e0e0e0] font-light [&::-webkit-scrollbar]:w-1.5' />
                 </div>
 
                 <label htmlFor="negative-prompt" className='text-black mb-1'>Negative Prompt:</label>
                 <div className='bg-neutral-500 p-4 rounded-lg mb-4'>
-                  <textarea value={input.negative_prompt} onChange={handleInput} rows={2} name="negative_prompt" id="negative-prompt" placeholder='Define things that you do not want in your image' className='bg-transparent outline-none w-full placeholder:text-[#e0e0e087] text-[#e0e0e0] font-light [&::-webkit-scrollbar]:w-1.5' />
+                  <textarea disabled={loading} value={input.negative_prompt} onChange={handleInput} rows={2} name="negative_prompt" id="negative-prompt" placeholder='Define things that you do not want in your image' className='bg-transparent outline-none w-full placeholder:text-[#e0e0e087] text-[#e0e0e0] font-light [&::-webkit-scrollbar]:w-1.5' />
                 </div>
 
                 <div className='flex justify-center items-center gap-3 mb-5'>
