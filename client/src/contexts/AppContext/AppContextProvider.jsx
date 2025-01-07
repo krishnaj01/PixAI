@@ -185,9 +185,9 @@ const AppContextProvider = (props) => {
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
-    // useEffect(() => {
-    //     getTokenVal();
-    // }, []);
+    useEffect(() => {
+        getTokenVal();
+    }, []);
 
     useEffect(() => {
         if (token) {

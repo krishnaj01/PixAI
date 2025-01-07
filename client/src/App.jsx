@@ -45,7 +45,7 @@ const App = () => {
                 {user && <Route path='/playground' element={<PlaygroundPage />} />}
                 {user && <Route path='/profile' element={<ProfilePage />} />}
 
-                {!user && <Route path='/reset-password/:token' element={<ResetPasswordPage />} />}
+                {!user && <Route path='/reset-password/:resetToken' element={<ResetPasswordPage />} />}
 
                 <Route path='*' element={<NotFoundPage />} />
 
