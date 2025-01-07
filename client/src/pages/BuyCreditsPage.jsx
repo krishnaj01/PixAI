@@ -8,6 +8,7 @@ import AppContext from '../contexts/AppContext/AppContext.js'
 import LoginContext from '../contexts/LoginContext/LoginContext.js'
 import UserContext from '../contexts/UserContext/UserContext.js'
 import { assets, plans } from '../assets/assets.js'
+import Loader from '../components/custom/Loader.jsx'
 
 const BuyCreditsPage = () => {
 
@@ -97,7 +98,7 @@ const BuyCreditsPage = () => {
       <div className='flex flex-wrap justify-center gap-10 text-center mb-7'>
         {plans.map((plan, idx) => {
           return (
-            <div key={`plan-${idx}`} className='w-80 flex flex-col items-center justify-center bg-white drop-shadow-sm border rounded-lg py-14 px-12 text-gray-600 hover:scale-105 transition-all duration-300'>
+            <div key={`plan-${idx}`} className={`w-80 flex flex-col items-center justify-center bg-white drop-shadow-sm border rounded-lg py-14 px-12 text-gray-600 ${!loading && 'hover:scale-105 transition-all duration-300'}`}>
               <div className='flex items-center gap-2 mb-5'>
                 <img src={assets.logo_icon} alt="app-logo" width={70} />
                 <p className='text-2xl font-semibold'>{plan.id}</p>
@@ -107,7 +108,7 @@ const BuyCreditsPage = () => {
                 <span className='text-3xl font-medium'>&#8377;{plan.price}</span> / {plan.credits} credits
               </p>
               <button disabled={loading} onClick={() => handleCLick(plan.id)} className={`w-full text-white mt-8 text-base rounded-md py-2.5 min-w-52 ${!loading ? 'hover:bg-gray-700 hover:scale-105 bg-gray-800 transition-all duration-200' : 'bg-gray-700'}`}>
-                {user ? 'Purchase' : 'Get Started'}
+                {!loading ? `${user ? 'Purchase' : 'Get Started'}` : <Loader width={6} />}
               </button>
             </div>
           )
