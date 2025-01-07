@@ -11,7 +11,7 @@ import { assets, plans } from '../assets/assets.js'
 
 const BuyCreditsPage = () => {
 
-  const { backendUrl, loadTotalUserData, token, navigate, resetImageData } = useContext(AppContext)
+  const { backendUrl, loadTotalUserData, token, navigate, resetImageData, loading, setLoading } = useContext(AppContext)
   const { setShowLogin } = useContext(LoginContext);
   const { user } = useContext(UserContext);
 
@@ -66,11 +66,13 @@ const BuyCreditsPage = () => {
   };
 
   const handleCLick = (planId) => {
+    setLoading(true);
     if (user) {
       paymentRazorpay(planId);
     } else {
       setShowLogin(true);
     }
+    setLoading(false);
   }
 
   useEffect(() => {
@@ -104,12 +106,9 @@ const BuyCreditsPage = () => {
               <p className='mt-6 text-base'>
                 <span className='text-3xl font-medium'>&#8377;{plan.price}</span> / {plan.credits} credits
               </p>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => handleCLick(plan.id)} className='w-full bg-gray-800 text-white mt-8 text-base rounded-md py-2.5 min-w-52 hover:bg-gray-700 transition-all duration-200'>
+              <button disabled={loading} onClick={() => handleCLick(plan.id)} className={`w-full text-white mt-8 text-base rounded-md py-2.5 min-w-52 ${!loading ? 'hover:bg-gray-700 hover:scale-105 bg-gray-800 transition-all duration-200' : 'bg-gray-700'}`}>
                 {user ? 'Purchase' : 'Get Started'}
-              </motion.button>
+              </button>
             </div>
           )
         })}
