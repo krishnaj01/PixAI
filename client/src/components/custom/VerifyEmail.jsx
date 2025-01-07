@@ -65,7 +65,7 @@ const VerifyEmail = () => {
         try {
             if (code.every(digit => digit != '')) {
                 const verificationCode = code.join('');
-                const { data } = await axios.post(`${backendUrl}/api/user/verify-email`, { withCredentials: true }, { userId: tempUserId, code: verificationCode });
+                const { data } = await axios.post(`${backendUrl}/api/user/verify-email`, { userId: tempUserId, code: verificationCode }, { withCredentials: true });
 
                 if (data.success) {
                     setToken(data.token);

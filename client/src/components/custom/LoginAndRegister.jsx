@@ -51,7 +51,7 @@ const LoginAndRegister = () => {
         try {
 
             if (currState === 'Login') {
-                const { data } = await axios.post(`${backendUrl}/api/user/login`, { withCredentials: true }, { email, password });
+                const { data } = await axios.post(`${backendUrl}/api/user/login`, { email, password }, { withCredentials: true });
 
                 if (data.success) {
                     setToken(data.token);
@@ -69,7 +69,7 @@ const LoginAndRegister = () => {
                     toast.error(data.message);
                 }
             } else {
-                const { data } = await axios.post(`${backendUrl}/api/user/register`, { withCredentials: true }, { name, email, password });
+                const { data } = await axios.post(`${backendUrl}/api/user/register`, { name, email, password }, { withCredentials: true });
 
                 if (data.success) {
                     // setToken(data.token);
