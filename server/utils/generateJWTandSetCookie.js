@@ -15,6 +15,7 @@ export const generateJWTandSetCookie = (res, userId) => {
         samSite: 'none',
         // domain: process.env.DOMAIN,
         secure: process.env.NODE_ENV === 'production', //for HTTPS
+        expires: Date.now() + (1000 * 60 * 60 * 24 * 7),
         maxAge: 1000 * 60 * 60 * 24 * 7,
         path: '/',
     });
