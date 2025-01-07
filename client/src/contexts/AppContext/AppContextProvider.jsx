@@ -189,11 +189,11 @@ const AppContextProvider = (props) => {
     //     getTokenVal();
     // }, []);
 
-    // useEffect(() => {
-    //     if (token) {
-    //         loadTotalUserData();
-    //     }
-    // }, [token])
+    useEffect(() => {
+        if (token) {
+            loadTotalUserData();
+        }
+    }, [token])
 
     const scrollbarProperties = '[&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-thumb]:rounded-full'
 
