@@ -12,7 +12,7 @@ export const generateJWTandSetCookie = (res, userId) => {
     res.cookie('jwt-token', token, {
         httpOnly: true, // prevents XSS attacks
         // sameSite: process.env.NODE_ENV === 'production' ? 'lax' : 'strict', // prevents CSRF attacks (as my backend and frontend are on different deployment therefore lax is preferred)
-        samSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+        samSite:'None',
         // domain: process.env.DOMAIN,
         secure: process.env.NODE_ENV === 'production' ? true : false, //for HTTPS
         expires: Date.now() + (1000 * 60 * 60 * 24 * 7),
