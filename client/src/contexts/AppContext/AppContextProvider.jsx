@@ -71,7 +71,7 @@ const AppContextProvider = (props) => {
         try {
             const {data} = await axios.get(`${backendUrl}/api/user/checkAuth`);
             if(data.success){
-                loadTotalUserData();
+                await loadTotalUserData();
             }
         } catch (error) {
             // console.log(error);

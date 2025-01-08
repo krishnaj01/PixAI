@@ -59,7 +59,7 @@ const LoginAndRegister = () => {
                     setEmail('');
                     setPassword('');
                     setShowLogin(false);
-                    loadTotalUserData();
+                    await loadTotalUserData();
                     toast.success(data.message);
                 } else {
                     if (data.message === 'Verify Yourself First') {

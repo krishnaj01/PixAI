@@ -71,7 +71,7 @@ const VerifyEmail = () => {
                     setUser(data.user);
                     setCode(["", "", "", "", "", ""]);
                     setShowVerifyEmail(false);
-                    loadTotalUserData();
+                    await loadTotalUserData();
                     toast.success(data.message);
                 } else {
                     toast.error(data.message);
