@@ -7,7 +7,7 @@ import crypto from 'crypto';
 import multiavatar from '@multiavatar/multiavatar/esm';
 
 import { sendVerificationEmail, sendWelcomeEmail, sendPasswordResetEmail, sendPasswordResetSuccessEmail } from "../utils/emails.js";
-import { generateJWTandSetCookie } from '../utils/generateJWTandSetCookie.js'
+import { generateJWT } from '../utils/generateJWT.js'
 
 import userModel from "../models/userModel.js";
 
@@ -107,7 +107,16 @@ const verifyEmail = async (req, res) => {
 
         await user.save();
 
-        const token = generateJWTandSetCookie(res, user._id);
+        const token = generateJWT(res, user._id);
+
+        res.cookie('access_token', token, {
+            httpOnly: true, // prevents XSS attacks
+            sameSite: process.env.NODE_ENV === 'production' ? 'lax' : 'strict', // prevents CSRF attacks (as my backend and frontend are on different deployment therefore lax is preferred)
+            secure: process.env.NODE_ENV === 'production' ? true : false, //for HTTPS
+            expires: Date.now() + (1000 * 60 * 60 * 24 * 7),
+            maxAge: 1000 * 60 * 60 * 24 * 7,
+            path: '/',
+        });
 
         await sendWelcomeEmail(res, user.name, user.email);
 
@@ -156,12 +165,22 @@ const loginUser = async (req, res) => {
             return res.json({ success: false, message: 'Invalid Email or Password' });
         }
 
-        const token = generateJWTandSetCookie(res, foundUser._id);
+        const token = generateJWT(foundUser._id);
+
+        res.cookie('access_token', token, {
+            httpOnly: true, // prevents XSS attacks
+            sameSite: process.env.NODE_ENV === 'production' ? 'lax' : 'strict', // prevents CSRF attacks (as my backend and frontend are on different deployment therefore lax is preferred)
+            secure: process.env.NODE_ENV === 'production' ? true : false, //for HTTPS
+            expires: Date.now() + (1000 * 60 * 60 * 24 * 7),
+            maxAge: 1000 * 60 * 60 * 24 * 7,
+            path: '/',
+        });
+
         foundUser.lastLogin = new Date();
         await foundUser.save();
 
         res.json({
-            success: true, message: 'Login Successful', token, user: {
+            success: true, message: 'Login Successful', user: {
                 userId: foundUser._id,
                 name: foundUser.name,
                 isVerified: foundUser.isVerified,
@@ -178,7 +197,7 @@ const loginUser = async (req, res) => {
 }
 
 const logout = (req, res) => {
-    res.clearCookie('jwt-token').json({ success: true, message: 'Logged out successfully' });
+    res.clearCookie('access_token').json({ success: true, message: 'Logged out successfully' });
 }
 
 const forgotPassword = async (req, res) => {
@@ -218,7 +237,7 @@ const resetPassword = async (req, res) => {
         const { token } = req.params;
         const { password } = req.body;
 
-        if (!password|| !token) {
+        if (!password || !token) {
             return res.json({ success: false, message: 'Missing Details' });
         }
 

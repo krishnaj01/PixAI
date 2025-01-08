@@ -3,6 +3,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { motion } from "motion/react"
 import { toast } from 'react-toastify';
 import axios from 'axios';
+axios.defaults.withCredentials = true;
 
 import { RxCross2 } from "react-icons/rx";
 
@@ -14,18 +15,15 @@ import Loader from './Loader.jsx';
 
 const ImageModal = () => {
 
-    const [loading, setLoading] = useState(false);
     const { user } = useContext(UserContext);
-    const { setShowImage, imageDetails, scrollbarProperties, viewportWidth, token, backendUrl, navigate } = useContext(AppContext);
+    const { setShowImage, imageDetails, scrollbarProperties, viewportWidth, backendUrl, navigate, loading, setLoading } = useContext(AppContext);
     const { _id, authorId, authorProfilePic, authorName, prompt, negative_prompt, imgURL, shared } = imageDetails;
 
     const toggleSharedStatus = async (e) => {
         e.preventDefault();
         try {
             setLoading(true);
-            const { data } = await axios.post(`${backendUrl}/api/image/toggle-share`, { imageId: _id }, {
-                headers: { token }
-            });
+            const { data } = await axios.post(`${backendUrl}/api/image/toggle-share`, { imageId: _id });
 
             if (data.success) {
                 setShowImage(false);
@@ -49,9 +47,7 @@ const ImageModal = () => {
         e.preventDefault();
         try {
             setLoading(true);
-            const { data } = await axios.post(`${backendUrl}/api/image/delete-image`, { imageId: _id }, {
-                headers: { token }
-            });
+            const { data } = await axios.post(`${backendUrl}/api/image/delete-image`, { imageId: _id });
             if (data.success) {
                 setShowImage(false);
                 toast.success(data.message);

@@ -3,6 +3,7 @@ import React, { useContext, useEffect } from 'react'
 import { motion } from "motion/react"
 import { toast } from 'react-toastify'
 import axios from 'axios'
+axios.defaults.withCredentials = true;
 
 import AppContext from '../contexts/AppContext/AppContext.js'
 import LoginContext from '../contexts/LoginContext/LoginContext.js'
@@ -28,7 +29,7 @@ const BuyCreditsPage = () => {
 
       handler: async (response) => {
         try {
-          const { data } = await axios.post(`${backendUrl}/api/transaction/verify-razorpay-payment`, response, { headers: { token } });
+          const { data } = await axios.post(`${backendUrl}/api/transaction/verify-razorpay-payment`, response);
 
           if (data.success) {
             loadTotalUserData();
@@ -51,9 +52,7 @@ const BuyCreditsPage = () => {
 
   const paymentRazorpay = async (planId) => {
     try {
-      const { data } = await axios.post(`${backendUrl}/api/transaction/payment-razorpay`, { planId }, {
-        headers: { token }
-      });
+      const { data } = await axios.post(`${backendUrl}/api/transaction/payment-razorpay`, { planId });
 
       if (data.success) {
         initializePayment(data.order, planId);

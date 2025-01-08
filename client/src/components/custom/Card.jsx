@@ -5,9 +5,9 @@ const Card = ({ _id, authorProfilePic, authorId, authorName, prompt, negative_pr
 
   const { setShowImage, setImageDetails, scrollbarProperties } = useContext(AppContext);
 
-  const handleClick = (_id, authorProfilePic, authorId, authorName, prompt, negative_prompt, imgURL, shared) => {
+  const handleClick = (imgDetails) => {
     setShowImage(true);
-    setImageDetails({ _id, authorProfilePic, authorId, authorName, prompt, negative_prompt, imgURL, shared });
+    setImageDetails(imgDetails);
   }
 
   useEffect(() => {
@@ -18,7 +18,7 @@ const Card = ({ _id, authorProfilePic, authorId, authorName, prompt, negative_pr
   }, [authorProfilePic]);
 
   return (
-    <div onClick={() => handleClick(_id, authorProfilePic, authorId, authorName, prompt, negative_prompt, imgURL, shared)} className={`rounded-xl group relative shadow-xl hover:scale-[1.02] cursor-pointer transition-all duration-300 ${imgWidth ? 'w-[7rem] customScreen2:w-[10rem]' : 'card'}`}>
+    <div onClick={() => handleClick({_id, authorProfilePic, authorId, authorName, prompt, negative_prompt, imgURL, shared})} className={`rounded-xl group relative shadow-xl hover:scale-[1.02] cursor-pointer transition-all duration-300 ${imgWidth ? 'w-[7rem] customScreen2:w-[10rem]' : 'card'}`}>
       <img src={imgURL} alt={prompt} className='w-full h-auto object-cover rounded-xl' />
 
       <div className='group-hover:flex flex-col max-h-[90%] hidden absolute bottom-0 left-0 right-0 bg-[#0000007d] m-2 p-4 rounded-md'>

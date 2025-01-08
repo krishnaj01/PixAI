@@ -9,9 +9,14 @@ userRouter.post('/register', registerUser);
 userRouter.post('/verify-email', verifyEmail);
 userRouter.post('/send-code-again', sendCodeAgain);
 userRouter.post('/login', loginUser);
-userRouter.post('/logout', logout);
 userRouter.post('/forgot-password', forgotPassword);
 userRouter.post('/reset-password/:token', resetPassword);
+
+userRouter.post('/logout', userAuth, logout);
+
+userRouter.get('/checkAuth', userAuth, (req,res) => {
+    res.json({success: true});
+})
 
 userRouter.get('/credits', userAuth, userCredits);
 

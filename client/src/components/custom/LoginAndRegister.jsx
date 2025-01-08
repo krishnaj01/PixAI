@@ -19,7 +19,7 @@ import Loader from './Loader.jsx';
 const LoginAndRegister = () => {
     const [currState, setCurrState] = useState('Login')
 
-    const { backendUrl, setToken, setLoading, loading, showPassword, togglePasswordVisibility } = useContext(AppContext);
+    const { backendUrl, setLoading, loading, showPassword, togglePasswordVisibility, loadTotalUserData } = useContext(AppContext);
     const { setShowLogin, setShowVerifyEmail, setShowForgotPassword } = useContext(LoginContext);
     const { setTempUserId, setUser } = useContext(UserContext);
 
@@ -51,14 +51,15 @@ const LoginAndRegister = () => {
         try {
 
             if (currState === 'Login') {
-                const { data } = await axios.post(`${backendUrl}/api/user/login`, { email, password }, { withCredentials: true });
+                const { data } = await axios.post(`${backendUrl}/api/user/login`, { email, password });
 
                 if (data.success) {
-                    setToken(data.token);
+                    // setToken(data.token);
                     setUser(data.user);
                     setEmail('');
                     setPassword('');
                     setShowLogin(false);
+                    loadTotalUserData();
                     toast.success(data.message);
                 } else {
                     if (data.message === 'Verify Yourself First') {
@@ -69,7 +70,7 @@ const LoginAndRegister = () => {
                     toast.error(data.message);
                 }
             } else {
-                const { data } = await axios.post(`${backendUrl}/api/user/register`, { name, email, password }, { withCredentials: true });
+                const { data } = await axios.post(`${backendUrl}/api/user/register`, { name, email, password });
 
                 if (data.success) {
                     // setToken(data.token);

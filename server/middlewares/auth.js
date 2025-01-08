@@ -1,7 +1,10 @@
+if (process.env.NODE_ENV !== "production") {
+    await import('dotenv/config');
+}
 import jwt from 'jsonwebtoken'
 
 const userAuth = async (req, res, next) => {
-    const { token } = req.headers;
+    const token = req.cookies['access_token'];
 
     if (!token) {
         return res.json({ success: false, message: 'Not Authorized. Login Again.' });
@@ -18,6 +21,8 @@ const userAuth = async (req, res, next) => {
         }
 
     } catch (error) {
+        // Incase of expired jwt or invalid token kill the token and clear the cookie
+        res.clearCookie("access_token");
         res.json({ success: false, message: error.message });
     }
 };

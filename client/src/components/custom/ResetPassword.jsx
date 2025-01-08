@@ -17,7 +17,7 @@ const ResetPassword = () => {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
 
-    const { token } = useParams();
+    const { resetToken } = useParams();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -27,7 +27,7 @@ const ResetPassword = () => {
             toast.error('Passwords do not match');
         } else {
             try {
-                const { data } = await axios.post(`${backendUrl}/api/user/reset-password/${token}`, { password });
+                const { data } = await axios.post(`${backendUrl}/api/user/reset-password/${resetToken}`, { password });
 
                 if (data.success) {
                     setPassword('');

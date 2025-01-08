@@ -9,7 +9,7 @@ import UserContext from '../../contexts/UserContext/UserContext.js'
 
 const GenerateBtn = () => {
 
-  const {user} = useContext(UserContext);
+  const { user } = useContext(UserContext);
   const { setShowLogin } = useContext(LoginContext)
   const { navigate } = useContext(AppContext);
 

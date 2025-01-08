@@ -3,7 +3,6 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import { motion } from "motion/react"
 import { toast } from 'react-toastify';
 import axios from 'axios';
-axios.defaults.withCredentials = true;
 
 import { RxCross2 } from "react-icons/rx";
 
@@ -19,7 +18,7 @@ const VerifyEmail = () => {
     // References for the 6 input fields to manipulate their focus programmatically.
     const inputRefs = useRef([]);
 
-    const { loading, setLoading, backendUrl, setToken } = useContext(AppContext);
+    const { loading, setLoading, backendUrl, loadTotalUserData } = useContext(AppContext);
 
     const { tempUserId, setUser } = useContext(UserContext);
 
@@ -65,13 +64,14 @@ const VerifyEmail = () => {
         try {
             if (code.every(digit => digit != '')) {
                 const verificationCode = code.join('');
-                const { data } = await axios.post(`${backendUrl}/api/user/verify-email`, { userId: tempUserId, code: verificationCode }, { withCredentials: true });
+                const { data } = await axios.post(`${backendUrl}/api/user/verify-email`, { userId: tempUserId, code: verificationCode });
 
                 if (data.success) {
-                    setToken(data.token);
+                    // setToken(data.token);
                     setUser(data.user);
                     setCode(["", "", "", "", "", ""]);
                     setShowVerifyEmail(false);
+                    loadTotalUserData();
                     toast.success(data.message);
                 } else {
                     toast.error(data.message);

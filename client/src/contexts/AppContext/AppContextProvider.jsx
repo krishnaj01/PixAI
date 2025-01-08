@@ -29,7 +29,7 @@ const AppContextProvider = (props) => {
         setShowPassword(showPassword => !showPassword);
     };
 
-    const [token, setToken] = useState(null);
+    // const [token, setToken] = useState(null);
     const [credit, setCredit] = useState(false);
     const [viewportWidth, setViewportWidth] = useState(window.innerWidth);
 
@@ -38,43 +38,53 @@ const AppContextProvider = (props) => {
 
     const navigate = useNavigate();
 
-    const getTokenVal = async () => {
-        try {
-            const { data } = await axios.get(`${backendUrl}/api/gettoken`, { withCredentials: true });
-            if (data.tokenValue) {
-                setToken(data.tokenValue);
-            } else {
-                setToken('');
-            }
+    // const getTokenVal = async () => {
+    //     try {
+    //         const { data } = await axios.get(`${backendUrl}/api/gettoken`);
+    //         if (data.tokenValue) {
+    //             setToken(data.tokenValue);
+    //         } else {
+    //             setToken('');
+    //         }
 
+    //     } catch (error) {
+    //         console.log(error);
+    //         toast.error(error.message);
+    //     }
+    // }
+
+    const loadTotalUserData = async () => {
+        try {
+            const { data } = await axios.get(`${backendUrl}/api/user/credits`)
+
+            if (data.success) {
+                setCredit(data.credits);
+                setUser(data.user);
+            }
         } catch (error) {
             console.log(error);
+            toast.error(error.message);
+        }
+    }
+
+    const checkAuth = async () => {
+        try {
+            const {data} = await axios.get(`${backendUrl}/api/user/checkAuth`);
+            if(data.success){
+                loadTotalUserData();
+            }
+        } catch (error) {
+            // console.log(error);
             toast.error(error.message);
         }
     }
 
     const deleteTokenCookie = async () => {
         try {
-            const { data } = await axios.post(`${backendUrl}/api/user/logout`, { withCredentials: true });
+            const { data } = await axios.post(`${backendUrl}/api/user/logout`);
             if (data.success) {
-                setToken('');
+                // setToken('');
                 toast.success(data.message);
-            }
-        } catch (error) {
-            console.log(error);
-            toast.error(error.message);
-        }
-    }
-
-    const loadTotalUserData = async () => {
-        try {
-            const { data } = await axios.get(`${backendUrl}/api/user/credits`, {
-                headers: { token: token }
-            })
-
-            if (data.success) {
-                setCredit(data.credits);
-                setUser(data.user);
             }
         } catch (error) {
             console.log(error);
@@ -90,9 +100,7 @@ const AppContextProvider = (props) => {
 
     const generateImage = async (prompt, negative_prompt) => {
         try {
-            const { data } = await axios.post(`${backendUrl}/api/image/generate-image`, { prompt, negative_prompt }, {
-                headers: { token }
-            })
+            const { data } = await axios.post(`${backendUrl}/api/image/generate-image`, { prompt, negative_prompt })
 
             if (data.success) {
                 loadTotalUserData();
@@ -116,9 +124,7 @@ const AppContextProvider = (props) => {
     const checkPrompt = async (prompt, negative_prompt) => {
         try {
             setCheckingPrompt(true);
-            const { data } = await axios.post(`${backendUrl}/api/image/check-prompt`, { prompt }, {
-                headers: { token }
-            })
+            const { data } = await axios.post(`${backendUrl}/api/image/check-prompt`, { prompt })
             setCheckingPrompt(false);
 
             if (data.success) {
@@ -126,9 +132,7 @@ const AppContextProvider = (props) => {
                 const image = await generateImage(prompt, negative_prompt);
                 if (image) {
                     setCheckingNSFW(true);
-                    const nsfwCheck = await axios.post(`${backendUrl}/api/image/check-nsfw`, { image }, {
-                        headers: { token }
-                    });
+                    const nsfwCheck = await axios.post(`${backendUrl}/api/image/check-nsfw`, { image });
 
                     if (nsfwCheck.data.success) {
                         setIsImageLoaded(true);
@@ -152,9 +156,7 @@ const AppContextProvider = (props) => {
 
     const saveImageToCloudinary = async (prompt, negative_prompt, image, shared) => {
         try {
-            const { data } = await axios.post(`${backendUrl}/api/image/upload-image`, { prompt, negative_prompt, image, shared }, {
-                headers: { token }
-            })
+            const { data } = await axios.post(`${backendUrl}/api/image/upload-image`, { prompt, negative_prompt, image, shared })
 
             if (data.success) {
                 return data.image;
@@ -185,19 +187,25 @@ const AppContextProvider = (props) => {
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
-    useEffect(() => {
-        getTokenVal();
-    }, []);
+    // useEffect(() => {
+    //     getTokenVal();
+    // }, []);
+
+    // useEffect(() => {
+    //     if (token) {
+    //         loadTotalUserData();
+    //     }
+    // }, [token])
 
     useEffect(() => {
-        if (token) {
-            loadTotalUserData();
-        }
-    }, [token])
+        checkAuth();
+    }, [])
+
+
 
     const scrollbarProperties = '[&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-thumb]:rounded-full'
 
-    const values = { checkPrompt, token, setToken, credit, setCredit, image, setImage, isImageLoaded, setIsImageLoaded, showImage, setShowImage, imageDetails, setImageDetails, backendUrl, getTokenVal, loadTotalUserData, logout, generateImage, viewportWidth, saveImageToCloudinary, navigate, scrollbarProperties, checkingPrompt, generating, checkingNSFW, loading, setLoading, resetImageData, showPassword, togglePasswordVisibility }
+    const values = { checkPrompt, credit, setCredit, image, setImage, isImageLoaded, setIsImageLoaded, showImage, setShowImage, imageDetails, setImageDetails, backendUrl, loadTotalUserData, logout, generateImage, viewportWidth, saveImageToCloudinary, navigate, scrollbarProperties, checkingPrompt, generating, checkingNSFW, loading, setLoading, resetImageData, showPassword, togglePasswordVisibility }
 
     return (
         <AppContext.Provider value={values}>

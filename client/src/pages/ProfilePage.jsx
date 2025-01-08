@@ -3,6 +3,7 @@ import React, { useContext, useState, useEffect } from 'react'
 import { motion } from "motion/react"
 import { toast } from 'react-toastify'
 import axios from 'axios'
+axios.defaults.withCredentials = true;
 
 import UserContext from '../contexts/UserContext/UserContext.js'
 import AppContext from '../contexts/AppContext/AppContext'
@@ -55,7 +56,7 @@ const ProfilePage = () => {
     const fetchImages = async () => {
       setLoading(true);
       try {
-        const { data } = await axios.get(`${backendUrl}/api/image/get-user-images`, { headers: { token } });
+        const { data } = await axios.get(`${backendUrl}/api/image/get-user-images`);
         if (data.success) {
           const sharedUserImages = data.images.filter((image) => image.shared).reverse();
           const savedUserImages = data.images.filter((image) => !image.shared).reverse();
