@@ -146,12 +146,12 @@ const LoginAndRegister = () => {
                 {currState !== 'Login' &&
                     <div className='border px-4 py-2 flex items-center gap-2 rounded-full mt-5 text-slate-500 focus-within:ring-1 focus-within:ring-zinc-600 transition duration-150'>
                         <FiUser />
-                        <input onChange={e => setName(e.target.value)} type="text" placeholder='Full Name' id='name' value={name} required className='outline-none text-sm' />
+                        <input onChange={e => setName(e.target.value)} type="text" placeholder='Full Name' id='name' value={name} required className='outline-none text-sm flex-1' />
                     </div>
                 }
                 <div className='border px-4 py-2 flex items-center gap-2 rounded-full mt-4 text-slate-500 focus-within:ring-1 focus-within:ring-zinc-600 transition duration-150'>
                     <FiMail />
-                    <input onChange={e => setEmail(e.target.value)} type="email" placeholder='Email Address' id='email' value={email} required className='outline-none text-sm' />
+                    <input onChange={e => setEmail(e.target.value)} type="email" placeholder='Email Address' id='email' value={email} required className='outline-none text-sm flex-1' />
                 </div>
                 <div className='border px-4 py-2 flex items-center gap-2 rounded-full mt-4 text-slate-500 focus-within:ring-1 focus-within:ring-zinc-600 transition duration-150'>
                     <FiLock />

@@ -7,7 +7,6 @@ import connectDB from './config/mongodb.js'
 import userRouter from './routes/userRoutes.js';
 import imageRouter from './routes/imageRoutes.js';
 import transactionRouter from './routes/transactionRoutes.js';
-import userAuth from './middlewares/auth.js';
 
 const app = express();
 
@@ -27,11 +26,6 @@ const setUpApp = async (PORT) => {
     app.use('/api/user', userRouter);
     app.use('/api/image', imageRouter);
     app.use('/api/transaction', transactionRouter);
-
-    // app.get('/api/gettoken', (req, res) => {
-    //     const tokenValue = req.cookies['jwt-token'];
-    //     res.json({ tokenValue: tokenValue });
-    // });
 
     app.get('/', (req, res) => {
         res.send(`HELLO FROM PIXAI BACKEND!`)

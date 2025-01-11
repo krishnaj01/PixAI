@@ -71,7 +71,7 @@ const ForgotPassword = () => {
 
                         <div className='border px-4 py-2 flex items-center gap-2 rounded-full mt-4 text-slate-500 focus-within:ring-1 focus-within:ring-zinc-600 transition duration-150'>
                             <FiMail />
-                            <input onChange={e => setEmail(e.target.value)} type="email" placeholder='Email Address' id='email' value={email} required className='outline-none text-sm' />
+                            <input onChange={e => setEmail(e.target.value)} type="email" placeholder='Email Address' id='email' value={email} required className='flex-1 outline-none text-sm' />
                         </div>
 
                         <button disabled={loading} className={`bg-zinc-700 w-full text-white py-2 mt-4 rounded-full ${!loading ? 'hover:bg-zinc-500 hover:scale-105 transition-all duration-200' : 'bg-zinc-500'}`}>

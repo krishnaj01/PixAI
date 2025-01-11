@@ -1,7 +1,7 @@
 import express from 'express'
 
 import userAuth from '../middlewares/auth.js'
-import { registerUser, loginUser, logout, userCredits, verifyEmail, forgotPassword, resetPassword, sendCodeAgain } from '../controllers/userController.js'
+import { registerUser, loginUser, logout, userDetails, verifyEmail, forgotPassword, resetPassword, sendCodeAgain } from '../controllers/userController.js'
 
 const userRouter = express.Router();
 
@@ -18,6 +18,6 @@ userRouter.get('/checkAuth', userAuth, (req,res) => {
     res.json({success: true});
 })
 
-userRouter.get('/credits', userAuth, userCredits);
+userRouter.get('/details', userAuth, userDetails);
 
 export default userRouter;

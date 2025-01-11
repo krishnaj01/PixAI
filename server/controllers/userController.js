@@ -12,22 +12,21 @@ import { generateJWT } from '../utils/generateJWT.js'
 import userModel from "../models/userModel.js";
 
 const registerUser = async (req, res) => {
+
+    const { name, email, password } = req.body;
+
+    if (!name || !email || !password) {
+        return res.json({ success: false, message: 'Missing Details' })
+    }
+
     try {
-        const { name, email, password } = req.body;
-
-        if (!name || !email || !password) {
-            return res.json({ success: false, message: 'Missing Details' })
-        }
-
         const doesUserExist = await userModel.findOne({ email });
 
         if (doesUserExist) {
             return res.json({ success: false, message: 'User with the given email already exists' });
         }
 
-        // const hashedPassword = await bcrypt.hash(password,12);
-        const salt = await bcrypt.genSalt(12);
-        const hashedPassword = await bcrypt.hash(password, salt);
+        const hashedPassword = await bcrypt.hash(password, 12);
 
         const profilePicture = multiavatar(`${email}`);
 
@@ -55,11 +54,13 @@ const registerUser = async (req, res) => {
 }
 
 const sendCodeAgain = async (req, res) => {
+
+    const { userId } = req.body;
+    if (!userId) {
+        return res.json({ success: false, message: 'Missing Details' });
+    }
+
     try {
-        const { userId } = req.body;
-        if (!userId) {
-            return res.json({ success: false, message: 'Missing Details' });
-        }
 
         const user = await userModel.findById(userId);
 
@@ -84,12 +85,14 @@ const sendCodeAgain = async (req, res) => {
 }
 
 const verifyEmail = async (req, res) => {
-    try {
-        const { userId, code } = req.body;
 
-        if (!code) {
-            return res.json({ success: false, message: 'Missing Details' });
-        }
+    const { userId, code } = req.body;
+
+    if (!userId || !code) {
+        return res.json({ success: false, message: 'Missing Details' });
+    }
+
+    try {
 
         const user = await userModel.findOne({
             userId,
@@ -107,12 +110,12 @@ const verifyEmail = async (req, res) => {
 
         await user.save();
 
-        const token = generateJWT(res, user._id);
+        const token = generateJWT(user._id);
 
         res.cookie('access_token', token, {
             httpOnly: true, // prevents XSS attacks
-            sameSite: process.env.NODE_ENV === 'production' ? 'lax' : 'strict', // prevents CSRF attacks (as my backend and frontend are on different deployment therefore lax is preferred)
-            secure: process.env.NODE_ENV === 'production' ? true : false, //for HTTPS
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict', // prevents CSRF attacks (as my backend and frontend are on different deployment therefore lax is preferred)
+            secure: process.env.NODE_ENV === 'production', //for HTTPS
             expires: Date.now() + (1000 * 60 * 60 * 24 * 7),
             maxAge: 1000 * 60 * 60 * 24 * 7,
             path: '/',
@@ -139,22 +142,23 @@ const verifyEmail = async (req, res) => {
 };
 
 const loginUser = async (req, res) => {
+
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+        return res.json({ success: false, message: 'Missing Details' });
+    }
+
     try {
         let flag = true;
-        const { email, password } = req.body;
-
-        if (!email || !password) {
-            return res.json({ success: false, message: 'Missing Details' });
-        }
-
         const foundUser = await userModel.findOne({ email });
 
         if (!foundUser) {
             flag = false;
         } else {
-            const isValid = await bcrypt.compare(password, foundUser.password);
+            const isMatch = await bcrypt.compare(password, foundUser.password);
 
-            if (!isValid) {
+            if (!isMatch) {
                 flag = false;
             } else if (!foundUser.isVerified) {
                 return res.json({ success: false, userId: foundUser._id, message: 'Verify Yourself First' });
@@ -169,8 +173,8 @@ const loginUser = async (req, res) => {
 
         res.cookie('access_token', token, {
             httpOnly: true, // prevents XSS attacks
-            sameSite: process.env.NODE_ENV === 'production' ? 'lax' : 'strict', // prevents CSRF attacks (as my backend and frontend are on different deployment therefore lax is preferred)
-            secure: process.env.NODE_ENV === 'production' ? true : false, //for HTTPS
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict', // prevents CSRF attacks (as my backend and frontend are on different deployment therefore lax is preferred)
+            secure: process.env.NODE_ENV === 'production', //for HTTPS
             expires: Date.now() + (1000 * 60 * 60 * 24 * 7),
             maxAge: 1000 * 60 * 60 * 24 * 7,
             path: '/',
@@ -196,18 +200,32 @@ const loginUser = async (req, res) => {
     }
 }
 
-const logout = (req, res) => {
-    res.clearCookie('access_token').json({ success: true, message: 'Logged out successfully' });
+const logout = async (req, res) => {
+    try {
+        res.clearCookie('access_token', {
+            httpOnly: true,
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+            secure: process.env.NODE_ENV === 'production',
+            expires: Date.now() + (1000 * 60 * 60 * 24 * 7),
+            maxAge: 1000 * 60 * 60 * 24 * 7,
+            path: '/',
+        });
+
+        return res.json({ success: true, message: 'Logged out successfully' });
+        
+    } catch (error) {
+        res.json({ success: false, message: error.message });
+    }
 }
 
 const forgotPassword = async (req, res) => {
+    const { email } = req.body;
+
+    if (!email) {
+        return res.json({ success: false, message: 'Missing Details' });
+    }
+
     try {
-        const { email } = req.body;
-
-        if (!email) {
-            return res.json({ success: false, message: 'Missing Details' });
-        }
-
         const user = await userModel.findOne({ email });
 
         if (!user) {
@@ -233,14 +251,14 @@ const forgotPassword = async (req, res) => {
 }
 
 const resetPassword = async (req, res) => {
+    const { token } = req.params;
+    const { password } = req.body;
+
+    if (!password || !token) {
+        return res.json({ success: false, message: 'Missing Details' });
+    }
+
     try {
-        const { token } = req.params;
-        const { password } = req.body;
-
-        if (!password || !token) {
-            return res.json({ success: false, message: 'Missing Details' });
-        }
-
         const user = await userModel.findOne({
             resetPasswordToken: token,
             resetPasswordTokenExpiresAt: { $gt: Date.now() }
@@ -267,9 +285,11 @@ const resetPassword = async (req, res) => {
     }
 }
 
-const userCredits = async (req, res) => {
+const userDetails = async (req, res) => {
+
+    const { userId } = req.body;
+
     try {
-        const { userId } = req.body;
         const user = await userModel.findById(userId);
         res.json({
             success: true, credits: user.creditBalance, user: {
@@ -288,4 +308,4 @@ const userCredits = async (req, res) => {
 }
 
 
-export { registerUser, verifyEmail, loginUser, userCredits, logout, forgotPassword, resetPassword, sendCodeAgain };
+export { registerUser, verifyEmail, loginUser, userDetails, logout, forgotPassword, resetPassword, sendCodeAgain };

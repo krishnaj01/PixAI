@@ -55,7 +55,7 @@ const AppContextProvider = (props) => {
 
     const loadTotalUserData = async () => {
         try {
-            const { data } = await axios.get(`${backendUrl}/api/user/credits`)
+            const { data } = await axios.get(`${backendUrl}/api/user/details`)
 
             if (data.success) {
                 setCredit(data.credits);
