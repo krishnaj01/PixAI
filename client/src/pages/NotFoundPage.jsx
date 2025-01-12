@@ -23,7 +23,7 @@ const NotFoundPage = () => {
                         <p>Back to Home</p>
                     </div>
                 </NavLink>
-                <p className='text-sm text-neutral-500'>If you are trying to access the profile page or the playground page, please login first!</p>
+                <p className='text-sm text-neutral-500'>If you are trying to access the dashboard page or the playground page, please login first!</p>
             </div>
 
         </motion.section>

@@ -10,7 +10,7 @@ import UserContext from './contexts/UserContext/UserContext.js';
 import HomePage from './pages/HomePage.jsx'
 import PlaygroundPage from './pages/PlaygroundPage.jsx'
 import BuyCreditsPage from './pages/BuyCreditsPage.jsx'
-import ProfilePage from './pages/ProfilePage.jsx'
+import DashboardPage from './pages/DashboardPage.jsx'
 import CommunityPostsPage from './pages/CommunityPostsPage.jsx'
 import Navbar from './components/custom/Navbar.jsx'
 import Footer from './components/custom/Footer.jsx'
@@ -43,7 +43,7 @@ const App = () => {
                 <Route path='/community' element={<CommunityPostsPage />} />
 
                 {user && <Route path='/playground' element={<PlaygroundPage />} />}
-                {user && <Route path='/profile' element={<ProfilePage />} />}
+                {user && <Route path='/dashboard' element={<DashboardPage />} />}
 
                 {!user && <Route path='/reset-password/:resetToken' element={<ResetPasswordPage />} />}
 

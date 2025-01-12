@@ -407,9 +407,25 @@ const toggleShare = async (req, res) => {
             return res.json({ success: false, message: 'Invalid Details' });
         }
 
+        const user = await userModel.findById(userId);
+
+        if (!user) {
+            return res.json({ success: false, message: 'Invalid Details' });
+        }
+
         const sharedStatus = image.shared;
         image.shared = !sharedStatus;
         const updatedImage = await image.save();
+
+        if(sharedStatus){
+            user.numberShared -= 1;
+            user.numberSaved += 1;
+        } else {
+            user.numberShared += 1;
+            user.numberSaved -= 1;
+        }
+
+        const updatedUser = await user.save();
 
         res.json({ success: true, message: 'Status toggled successfully' });
 
@@ -431,8 +447,22 @@ const deleteImage = async (req, res) => {
             return res.json({ success: false, message: 'Invalid Details' });
         }
 
+        const user = await userModel.findById(userId);
+
+        if (!user) {
+            return res.json({ success: false, message: 'Invalid Details' });
+        }
+
         const match = image.imgURL.match(/PixAI\/[^.]+/);
         const filename = match[0];
+
+        const sharedStatus = image.shared;
+        if(sharedStatus){
+            user.numberShared -= 1;
+        } else {
+            user.numberSaved -= 1;
+        }
+        await user.save();
 
         await cloudinary.uploader.destroy(filename);
         await userModel.findByIdAndUpdate(userId, { $pull: { images: imageId } });

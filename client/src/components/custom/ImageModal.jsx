@@ -16,7 +16,7 @@ import Loader from './Loader.jsx';
 const ImageModal = () => {
 
     const { user } = useContext(UserContext);
-    const { setShowImage, imageDetails, scrollbarProperties, viewportWidth, backendUrl, navigate, loading, setLoading } = useContext(AppContext);
+    const { setShowImage, imageDetails, scrollbarProperties, viewportWidth, backendUrl, navigate, loading, setLoading, loadTotalUserData } = useContext(AppContext);
     const { _id, authorId, authorProfilePic, authorName, prompt, negative_prompt, imgURL, shared } = imageDetails;
 
     const toggleSharedStatus = async (e) => {
@@ -29,7 +29,7 @@ const ImageModal = () => {
                 setShowImage(false);
                 if (shared) {
                     toast.success('Successfully removed image');
-                    navigate('/profile');
+                    navigate('/dashboard');
                 } else {
                     toast.success('Successfully shared image');
                     navigate('/community');
@@ -38,6 +38,7 @@ const ImageModal = () => {
                 toast.error(data.message);
             }
             setLoading(false);
+            await loadTotalUserData();
         } catch (error) {
             toast.error(error.message);
         }
@@ -51,11 +52,12 @@ const ImageModal = () => {
             if (data.success) {
                 setShowImage(false);
                 toast.success(data.message);
-                navigate('/profile');
+                navigate('/dashboard');
             } else {
                 toast.error(data.message);
             }
             setLoading(false);
+            await loadTotalUserData();
         } catch (error) {
             toast.error(error.message);
         }

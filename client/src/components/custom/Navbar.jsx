@@ -70,8 +70,8 @@ const Navbar = () => {
                                         <div className='w-12 drop-shadow border-[0.1rem] border-zinc-900 rounded-full' id='profile-picture-navbar'></div>
                                         <div className='absolute hidden group-hover:block top-0 right-0 z-10 text-black rounded pt-12'>
                                             <ul className='list-none m-0 p-2 bg-white rounded-md border text-base'>
-                                                <NavLink to='/profile'>
-                                                    <li className='py-1 px-2 mb-1 cursor-pointer pr-10 rounded-md hover:bg-gray-100 hover:scale-[1.02] transition-all duration-100'>Profile</li>
+                                                <NavLink to='/dashboard'>
+                                                    <li className='py-1 px-2 mb-1 cursor-pointer pr-10 rounded-md hover:bg-gray-100 hover:scale-[1.02] transition-all duration-100'>Dashboard</li>
                                                 </NavLink>
                                                 <hr />
                                                 <li onClick={logoutClick} className='py-1 px-2 mt-1 cursor-pointer pr-10 rounded-md hover:bg-gray-100 hover:scale-[1.02] transition-all duration-100'>Logout</li>
@@ -113,8 +113,8 @@ const Navbar = () => {
                                         <GiHamburgerMenu size={30} />
                                         <div className='absolute hidden group-hover:block top-0 right-0 z-10 text-black rounded pt-12'>
                                             <ul className='list-none m-0 p-2 bg-white rounded-md border text-base'>
-                                                <NavLink to='/profile'>
-                                                    <li className='py-1 px-2 mb-1 cursor-pointer pr-10 rounded-md hover:bg-gray-100 hover:scale-[1.02] transition-all duration-100'>Profile</li>
+                                                <NavLink to='/dashboard'>
+                                                    <li className='py-1 px-2 mb-1 cursor-pointer pr-10 rounded-md hover:bg-gray-100 hover:scale-[1.02] transition-all duration-100'>Dashboard</li>
                                                 </NavLink>
                                                 <hr />
                                                 <NavLink to='/playground'>

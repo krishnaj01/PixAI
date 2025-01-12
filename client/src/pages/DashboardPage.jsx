@@ -6,13 +6,13 @@ import axios from 'axios'
 axios.defaults.withCredentials = true;
 
 import UserContext from '../contexts/UserContext/UserContext.js'
-import AppContext from '../contexts/AppContext/AppContext'
+import AppContext from '../contexts/AppContext/AppContext.js'
 
 import Loader from '../components/custom/Loader.jsx'
 import RenderImages from '../components/custom/RenderImages'
 
 
-const ProfilePage = () => {
+const DashboardPage = () => {
 
   const { user } = useContext(UserContext);
   const { credit, backendUrl, scrollbarProperties, viewportWidth, loading, setLoading, resetImageData } = useContext(AppContext);
@@ -84,9 +84,9 @@ const ProfilePage = () => {
       transition={{ duration: 1 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      className='pt-10 mb-8 flex flex-col items-center justify-center'>
+      className='pt-10 mb-8 mt-[-1.2rem] flex flex-col items-center justify-center'>
       <h1 className='text-center text-3xl font-medium mb-3'>Dashboard</h1>
-      <p className='text-center text-base text-zinc-500 mb-6 sm:mb-10'>Welcome to your dashboard! Track, manage, and explore all in one place.</p>
+      <p className='text-center text-base text-zinc-500'>Welcome to your dashboard! Track, manage, and explore all in one place.</p>
 
       {viewportWidth >= 1024 &&
 
@@ -226,4 +226,4 @@ const ProfilePage = () => {
   )
 }
 
-export default ProfilePage
+export default DashboardPage

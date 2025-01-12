@@ -50,7 +50,7 @@ const PlaygroundPage = () => {
     if(savedImage){
       toast.success('Image saved successfully');
       loadTotalUserData();
-      navigate('/profile');
+      navigate('/dashboard');
     }
     setLoading(false);
   }
@@ -140,8 +140,8 @@ const PlaygroundPage = () => {
                     Share with Community
                   </button>
 
-                  <button onClick={saveImage} disabled={loading} className={`py-3 w-36 rounded-full ${!loading ? 'bg-[#266bb6] hover:bg-[#266cb6bd] hover:scale-105 transition-all duration-200' : 'bg-[#266cb6bd]'}`}>
-                    Save to Profile
+                  <button onClick={saveImage} disabled={loading} className={`py-3 w-48 rounded-full ${!loading ? 'bg-[#266bb6] hover:bg-[#266cb6bd] hover:scale-105 transition-all duration-200' : 'bg-[#266cb6bd]'}`}>
+                    Save to Dashboard
                   </button>
                 </div>
                 <div className='flex items-center justify-center gap-5 mb-7'>
@@ -152,7 +152,7 @@ const PlaygroundPage = () => {
                     Generate Another
                   </button>
                 </div>
-                <p className='text-sm text-neutral-500'>(Note: Sharing the image with community automatically saves it to your profile)</p>
+                <p className='text-sm text-neutral-500'>(Note: Sharing the image with community automatically saves it to your dashboard)</p>
               </div>
             }
           </section>
@@ -247,7 +247,7 @@ const PlaygroundPage = () => {
                     Generate Another
                   </button>
                 </div>
-                <p className='text-xs text-center text-neutral-500'>(Note: Sharing the image with community automatically saves it to your profile)</p>
+                <p className='text-xs text-center text-neutral-500'>(Note: Sharing the image with community automatically saves it to your dashboard)</p>
               </>
             }
           </section>
