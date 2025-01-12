@@ -116,7 +116,7 @@ const verifyEmail = async (req, res) => {
             httpOnly: true, // prevents XSS attacks
             sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict', // prevents CSRF attacks (as my backend and frontend are on different deployment therefore lax is preferred)
             secure: process.env.NODE_ENV === 'production', //for HTTPS
-            expires: Date.now() + (1000 * 60 * 60 * 24 * 7),
+            expires: new Date(Date.now() + (1000 * 60 * 60 * 24 * 7)),
             maxAge: 1000 * 60 * 60 * 24 * 7,
             path: '/',
         });
@@ -175,7 +175,7 @@ const loginUser = async (req, res) => {
             httpOnly: true, // prevents XSS attacks
             sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict', // prevents CSRF attacks (as my backend and frontend are on different deployment therefore lax is preferred)
             secure: process.env.NODE_ENV === 'production', //for HTTPS
-            expires: Date.now() + (1000 * 60 * 60 * 24 * 7),
+            expires: new Date(Date.now() + (1000 * 60 * 60 * 24 * 7)),
             maxAge: 1000 * 60 * 60 * 24 * 7,
             path: '/',
         });
@@ -202,14 +202,7 @@ const loginUser = async (req, res) => {
 
 const logout = async (req, res) => {
     try {
-        res.clearCookie('access_token', {
-            httpOnly: true,
-            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
-            secure: process.env.NODE_ENV === 'production',
-            expires: Date.now() + (1000 * 60 * 60 * 24 * 7),
-            maxAge: 1000 * 60 * 60 * 24 * 7,
-            path: '/',
-        });
+        res.clearCookie('access_token');
 
         return res.json({ success: true, message: 'Logged out successfully' });
         
