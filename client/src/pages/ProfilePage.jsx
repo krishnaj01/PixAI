@@ -15,7 +15,7 @@ import RenderImages from '../components/custom/RenderImages'
 const ProfilePage = () => {
 
   const { user } = useContext(UserContext);
-  const { credit, token, backendUrl, scrollbarProperties, viewportWidth, loading, setLoading, resetImageData } = useContext(AppContext);
+  const { credit, backendUrl, scrollbarProperties, viewportWidth, loading, setLoading, resetImageData } = useContext(AppContext);
 
   const [userSavedImages, setUserSavedImages] = useState([]);
   const [userSharedImages, setUserSharedImages] = useState([]);

@@ -30,7 +30,7 @@ const AppContextProvider = (props) => {
     };
 
     // const [token, setToken] = useState(null);
-    const [credit, setCredit] = useState(false);
+    const [credit, setCredit] = useState('');
     const [viewportWidth, setViewportWidth] = useState(window.innerWidth);
 
     const [showImage, setShowImage] = useState(false);
