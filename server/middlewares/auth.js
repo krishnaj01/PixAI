@@ -22,7 +22,12 @@ const userAuth = async (req, res, next) => {
 
     } catch (error) {
         // Incase of expired jwt or invalid token kill the token and clear the cookie
-        res.clearCookie("access_token");
+        res.clearCookie('access_token', {
+            httpOnly: true,
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+            secure: process.env.NODE_ENV === 'production',
+            path: '/'
+        });
         res.json({ success: false, message: error.message });
     }
 };
