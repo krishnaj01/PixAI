@@ -1,7 +1,7 @@
 # PixAI Website
 PixAI is a full stack website project that provides an intuitive and streamlined platform for users to explore, manage, and enhance their visual creativity through AI-powered image generation. This platform caters to photographers, designers, and creative enthusiasts.
 
-## Live Website Link
+## 🚀 Live Application
 https://pixai-image-generation.onrender.com/
 
 <div style="display: flex; align-items: center; justify-content: space-evenly; flex-wrap: wrap; gap: 1rem">
@@ -11,7 +11,7 @@ https://pixai-image-generation.onrender.com/
     <img src="./server/assets/screenshots/dashboard-page.png" alt="PixAI Dashboard Page" style="width: 40%; height: auto;">
 </div>
 
-## Features
+## 🎯 Features
 - **AI-Powered Image Generation:** Generate images using advanced AI algorithms with support for both prompts and negative prompts.
 
 - **NSFW Detection:** NSFW detection using Perspective API for text prompts and an additional API to verify generated images, ensuring double-check safety.
@@ -28,7 +28,7 @@ https://pixai-image-generation.onrender.com/
 
 - **Responsive Design:**  Fully optimized for desktop and mobile devices.
 
-## Tech Stack
+## 🛠️ Tech Stack
 - **Frontend:** React.js, HTML5, CSS3, Tailwind CSS
 - **Backend:** Node.js, Express.js
 - **Database:** MongoDB Atlas
@@ -39,10 +39,10 @@ https://pixai-image-generation.onrender.com/
 1. ImageAI-Generator
 2. NSFW images detection and classification
 
-## Project Structure
+## 📂 Project Structure
 The project is divided into two main parts: the client (frontend) and the server (backend).
 
-##  Setup and Installation
+## ⚙️ Setup and Installation
 Clone the repository & enter the PixAI directory.
 ```bash
 git clone https://github.com/krishnaj01/PixAI.git
@@ -108,12 +108,12 @@ CURRENCY='INR'
 npm run server
 ```
 
-## Contribution Guidelines
+## 📝 Contribution Guidelines
 To contribute:
 1. Fork the repository.
 2. Create a new branch for your feature/bug fix.
 3. Commit your changes with meaningful commit messages.
 4. Push to your fork and submit a pull request.
 
-## Contact
+## 📬 Contact
 For any issues or suggestions, contact me at krishnaj@iitbhilai.ac.in
