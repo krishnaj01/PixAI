@@ -26,7 +26,7 @@ const Footer = () => {
                 <div className='hidden md:flex flex-col gap-1 mt-10'>
                     <h2 className='text-2xl font-medium mb-5'>Contact Me</h2>
                     <div className='flex gap-3 items-center justify-center text-4xl'>
-                        <a href='https://www.instagram.com/krishna_jhanwar01/' target="_blank" className='border p-2 rounded-full border-zinc-900'>
+                        <a href='https://www.instagram.com/krishna.jhanwar01/' target="_blank" className='border p-2 rounded-full border-zinc-900'>
                             <FaSquareInstagram className='p-1 hover:p-0.5' />
                         </a>
                         <a href='https://github.com/krishnaj01' target="_blank" className='border p-2 rounded-full border-zinc-900'>
