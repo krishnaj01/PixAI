@@ -6,8 +6,13 @@ import axios from "axios";
 
 import { cloudinary } from '../config/cloudinary.js'
 
+import { GoogleGenAI, Modality } from "@google/genai";
+
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+
 import userModel from "../models/userModel.js";
 import imageModel from "../models/imageModel.js";
+import { convertBase64ToCovered1024 } from '../utils/convertBase64ToCovered1024.js';
 
 // import { Buffer } from 'buffer';
 // import * as tf from '@tensorflow/tfjs';
@@ -209,31 +214,92 @@ const generateImage = async (req, res) => {
         // const imageBlob = await response.blob();
         // const resultImage = URL.createObjectURL(imageBlob);
         // const imageURL = resultImage.replace('blob:nodedata:', 'blob:http://localhost:3000/');
+        
+        // const query = async (data) => {
+        //     const response = await fetch(
+        //         "https://router.huggingface.co/fal-ai/fal-ai/lightning-models",
+        //         {
+        //             headers: {
+        //                 Authorization: `Bearer ${process.env.HUGGING_FACE_API_KEY}`,
+        //                 "Content-Type": "application/json",
+        //             },
+        //             method: "POST",
+        //             body: JSON.stringify(data),
+        //         }
+        //     );
+        //     // const result = await response.blob();
+        //     return response;
+        // }
 
+        // const generateImage = async(prompt, negative_prompt) => {
+        //     const imageBlob = await query({
+        //         sync_mode: true,
+        //         prompt,
+        //         negative_prompt,
+        //         height: 1024,
+        //         width: 1024
+        //     });
+        //     console.log(imageBlob);
+
+        //     // Use imageBlob here (e.g., create an object URL)
+        //     // const imageURL = URL.createObjectURL(imageBlob);
+        //     // console.log(imageURL); // or display in <img src=imageURL>
+        // }
+
+        // await generateImage(prompt, negative_prompt);
+
+        const contents = `${prompt}` + (negative_prompt ? `, negative prompt: ${negative_prompt}` : '');
+        const response = await ai.models.generateContent({
+            model: "gemini-2.0-flash-preview-image-generation",
+            contents: contents,
+            config: {
+            responseModalities: [Modality.TEXT, Modality.IMAGE],
+            },
+            // imageGenerationConfig: {
+            //     width: 512,
+            //     height: 512,
+            //     hrScale: 2,
+            //     hrUpscalerStrength: 0.5,
+            // },
+        });
+
+        let imageData;
+
+        for (const part of response.candidates[0].content.parts) {
+            // Based on the part type, either show the text or save the image
+            if (part.inlineData) {
+                imageData = part.inlineData.data;
+            }
+        }
+
+        const initialBase64Image = `data:image/png;base64,${imageData}`;
+        const resultImage = await convertBase64ToCovered1024(initialBase64Image);
+
+        // console.log(resultImage);
 
         // RAPID API: ImageAI-Generator
 
-        const options = {
-            method: 'POST',
-            url: 'https://imageai-generator.p.rapidapi.com/image',
-            headers: {
-                'x-rapidapi-key': process.env.X_RAPID_API_KEY,
-                'x-rapidapi-host': 'imageai-generator.p.rapidapi.com',
-                'Content-Type': 'application/json'
-            },
-            data: {
-                prompt,
-                negative_prompt,
-                width: 512,
-                height: 512,
-                hr_scale: 2
-            }
-        };
+        // const options = {
+        //     method: 'POST',
+        //     url: 'https://imageai-generator.p.rapidapi.com/image',
+        //     headers: {
+        //         'x-rapidapi-key': process.env.X_RAPID_API_KEY,
+        //         'x-rapidapi-host': 'imageai-generator.p.rapidapi.com',
+        //         'Content-Type': 'application/json'
+        //     },
+        //     data: {
+        //         prompt,
+        //         negative_prompt,
+        //         width: 512,
+        //         height: 512,
+        //         hr_scale: 2
+        //     }
+        // };
 
-        const response = await axios.request(options);
+        // const response = await axios.request(options);
 
-        const base64Image = response.data;
-        const resultImage = `data:image/png;base64,${base64Image}`
+        // const base64Image = response.data;
+        // const resultImage = `data:image/png;base64,${base64Image}`
 
         // converting base64 to binary image
         // const image = atob(resultImage);
