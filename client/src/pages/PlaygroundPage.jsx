@@ -50,7 +50,7 @@ const PlaygroundPage = () => {
     if(savedImage){
       toast.success('Image saved successfully');
       loadTotalUserData();
-      navigate('/dashboard');
+      // navigate('/dashboard');
     }
     setLoading(false);
   }
@@ -63,7 +63,7 @@ const PlaygroundPage = () => {
     if(savedImage){
       toast.success('Image shared successfully');
       loadTotalUserData();
-      navigate('/community');
+      // navigate('/community');
     }
     setLoading(false);
   }
