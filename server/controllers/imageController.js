@@ -6,13 +6,16 @@ import axios from "axios";
 
 import { cloudinary } from '../config/cloudinary.js'
 
-import { GoogleGenAI, Modality } from "@google/genai";
+// import { GoogleGenAI, Modality } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+// const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+
+import Together from "together-ai";
+const together = new Together();
 
 import userModel from "../models/userModel.js";
 import imageModel from "../models/imageModel.js";
-import { convertBase64ToCovered1024 } from '../utils/convertBase64ToCovered1024.js';
+import { convertBase64ToCovered1024, convertUrlToCovered1024 } from '../utils/convertBase64ToCovered1024.js';
 
 // import { Buffer } from 'buffer';
 // import * as tf from '@tensorflow/tfjs';
@@ -248,32 +251,47 @@ const generateImage = async (req, res) => {
 
         // await generateImage(prompt, negative_prompt);
 
-        const contents = `${prompt}` + (negative_prompt ? `, negative prompt: ${negative_prompt}` : '');
-        const response = await ai.models.generateContent({
-            model: "gemini-2.0-flash-preview-image-generation",
-            contents: contents,
-            config: {
-            responseModalities: [Modality.TEXT, Modality.IMAGE],
-            },
-            // imageGenerationConfig: {
-            //     width: 512,
-            //     height: 512,
-            //     hrScale: 2,
-            //     hrUpscalerStrength: 0.5,
-            // },
+        // const contents = (negative_prompt ? 'prompt: ' : '') + `${prompt}` + (negative_prompt ? `, negative prompt: ${negative_prompt}` : '');
+        // const response = await ai.models.generateContent({
+        //     model: "gemini-2.0-flash-preview-image-generation",
+        //     contents: contents,
+        //     config: {
+        //     responseModalities: [Modality.TEXT, Modality.IMAGE],
+        //     },
+        //     // imageGenerationConfig: {
+        //     //     width: 512,
+        //     //     height: 512,
+        //     //     hrScale: 2,
+        //     //     hrUpscalerStrength: 0.5,
+        //     // },
+        // });
+
+        // let imageData;
+
+        // for (const part of response.candidates[0].content.parts) {
+        //     // Based on the part type, either show the text or save the image
+        //     if (part.inlineData) {
+        //         imageData = part.inlineData.data;
+        //     }
+        // }
+
+        const response = await together.images.create({
+            model: "black-forest-labs/FLUX.1-schnell-Free",
+            prompt: prompt,
+            negative_prompt: negative_prompt,
+            width: 1024,
+            height: 1024,
+            guidance_scale: 9,
         });
 
-        let imageData;
+        // console.log(response);
 
-        for (const part of response.candidates[0].content.parts) {
-            // Based on the part type, either show the text or save the image
-            if (part.inlineData) {
-                imageData = part.inlineData.data;
-            }
-        }
+        // const initialBase64Image = `data:image/png;base64,${imageData}`;
+        // const resultImage = await convertBase64ToCovered1024(initialBase64Image);
+        const initialImage = response.data[0].url;
+        const resultImage = await convertUrlToCovered1024(initialImage);
 
-        const initialBase64Image = `data:image/png;base64,${imageData}`;
-        const resultImage = await convertBase64ToCovered1024(initialBase64Image);
+        // console.log(resultImage);
 
         // console.log(resultImage);
 
