@@ -13,6 +13,8 @@ import { assets } from "../../assets/assets.js";
 const AppContextProvider = (props) => {
 
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
+    const guestLoginEmail = import.meta.env.VITE_GUEST_LOGIN_EMAIL;
+    const guestLoginPassword = import.meta.env.VITE_GUEST_LOGIN_PASSWORD;
 
     const { setUser } = useContext(UserContext);
 
@@ -205,7 +207,7 @@ const AppContextProvider = (props) => {
 
     const scrollbarProperties = '[&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-thumb]:rounded-full'
 
-    const values = { checkPrompt, credit, setCredit, image, setImage, isImageLoaded, setIsImageLoaded, showImage, setShowImage, imageDetails, setImageDetails, backendUrl, loadTotalUserData, logout, generateImage, viewportWidth, saveImageToCloudinary, navigate, scrollbarProperties, checkingPrompt, generating, checkingNSFW, loading, setLoading, resetImageData, showPassword, togglePasswordVisibility }
+    const values = { checkPrompt, credit, setCredit, image, setImage, isImageLoaded, setIsImageLoaded, showImage, setShowImage, imageDetails, setImageDetails, backendUrl, guestLoginEmail, guestLoginPassword, loadTotalUserData, logout, generateImage, viewportWidth, saveImageToCloudinary, navigate, scrollbarProperties, checkingPrompt, generating, checkingNSFW, loading, setLoading, resetImageData, showPassword, togglePasswordVisibility }
 
     return (
         <AppContext.Provider value={values}>

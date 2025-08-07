@@ -19,13 +19,14 @@ import Loader from './Loader.jsx';
 const LoginAndRegister = () => {
     const [currState, setCurrState] = useState('Login')
 
-    const { backendUrl, setLoading, loading, showPassword, togglePasswordVisibility, loadTotalUserData } = useContext(AppContext);
+    const { backendUrl, guestLoginEmail, guestLoginPassword, setLoading, loading, showPassword, togglePasswordVisibility, loadTotalUserData } = useContext(AppContext);
     const { setShowLogin, setShowVerifyEmail, setShowForgotPassword } = useContext(LoginContext);
     const { setTempUserId, setUser } = useContext(UserContext);
 
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+
 
     const clickOnForgotPassword = () => {
         setShowLogin(false);
@@ -43,6 +44,35 @@ const LoginAndRegister = () => {
         setEmail('');
         setName('');
         setPassword('');
+    }
+
+    const guestLogin = async () => {
+        setLoading(true);
+        try {
+            const { data } = await axios.post(`${backendUrl}/api/user/login`, { 
+                email: guestLoginEmail, 
+                password: guestLoginPassword 
+            });
+
+            if (data.success) {
+                setUser(data.user);
+                setEmail('');
+                setPassword('');
+                setShowLogin(false);
+                await loadTotalUserData();
+                toast.success(data.message);
+            } else {
+                if (data.message === 'Verify Yourself First') {
+                    setTempUserId(data.userId);
+                    setShowLogin(false);
+                    setShowVerifyEmail(true);
+                }
+                toast.error(data.message);
+            }
+        } catch (error) {
+            toast.error(error.message);
+        }
+        setLoading(false);
     }
 
     const handleFormSubmit = async (e) => {
@@ -172,6 +202,8 @@ const LoginAndRegister = () => {
                 <button disabled={loading} className={`bg-zinc-700 w-full text-white py-2 mt-4 rounded-full ${!loading ? 'hover:bg-zinc-500 hover:scale-105 transition-all duration-200' : 'bg-zinc-500'}`}>
                     {!loading ? `${currState === 'Login' ? 'LOG IN' : 'SIGN UP'}` : <Loader width={6} />}
                 </button>
+
+                <p className='mt-2 mb-[-0.7em] text-center text-slate-500 text-sm'><span className='text-blue-600 hover:underline cursor-pointer' onClick={guestLogin} >Guest Login</span></p>
 
                 {currState === 'Login' ?
                     <p className='mt-5 text-center text-slate-500 text-sm'>Don't have an account? <span className='text-blue-600 hover:underline cursor-pointer' onClick={clickOnRegister} >Register</span></p>
