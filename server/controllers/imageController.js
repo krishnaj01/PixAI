@@ -3,15 +3,13 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 import axios from "axios";
-
 import { cloudinary } from '../config/cloudinary.js'
 
 // import { GoogleGenAI, Modality } from "@google/genai";
-
 // const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
-import Together from "together-ai";
-const together = new Together();
+// import Together from "together-ai";
+// const together = new Together();
 
 import userModel from "../models/userModel.js";
 import imageModel from "../models/imageModel.js";
@@ -36,6 +34,7 @@ import { convertBase64ToCovered1024, convertUrlToCovered1024 } from '../utils/co
 // });
 
 // import { google } from 'googleapis';
+
 const checkPrompt = async (req, res) => {
     try {
         const { userId, prompt } = req.body;
@@ -251,6 +250,7 @@ const generateImage = async (req, res) => {
 
         // await generateImage(prompt, negative_prompt);
 
+        // GOOGLE GEMINI API
         // const contents = (negative_prompt ? 'prompt: ' : '') + `${prompt}` + (negative_prompt ? `, negative prompt: ${negative_prompt}` : '');
         // const response = await ai.models.generateContent({
         //     model: "gemini-2.0-flash-preview-image-generation",
@@ -258,12 +258,12 @@ const generateImage = async (req, res) => {
         //     config: {
         //     responseModalities: [Modality.TEXT, Modality.IMAGE],
         //     },
-        //     // imageGenerationConfig: {
-        //     //     width: 512,
-        //     //     height: 512,
-        //     //     hrScale: 2,
-        //     //     hrUpscalerStrength: 0.5,
-        //     // },
+        //     imageGenerationConfig: {
+        //         width: 512,
+        //         height: 512,
+        //         hrScale: 2,
+        //         hrUpscalerStrength: 0.5,
+        //     },
         // });
 
         // let imageData;
@@ -275,20 +275,87 @@ const generateImage = async (req, res) => {
         //     }
         // }
 
-        const response = await together.images.create({
-            model: "black-forest-labs/FLUX.1-schnell-Free",
-            prompt: prompt,
-            negative_prompt: negative_prompt,
-            width: 1024,
-            height: 1024,
-            guidance_scale: 9,
-        });
+        // const response = await together.images.create({
+        //     model: "black-forest-labs/FLUX.1-schnell-Free",
+        //     prompt: prompt,
+        //     negative_prompt: negative_prompt,
+        //     width: 1024,
+        //     height: 1024,
+        //     guidance_scale: 9,
+        // });
+
+        // const options = {
+        //     method: 'POST',
+        //     headers: {
+        //         'x-freepik-api-key': process.env.FREEPIK_API_KEY,
+        //         'Content-Type': 'application/json'
+        //     },
+        //     body: JSON.stringify({
+        //         prompt: prompt,
+        //         prompt_upsampling: false,
+        //         // seed: 123,
+        //         aspect_ratio: 'square_1_1',
+        //         safety_tolerance: 4,
+        //         output_format: 'jpeg',
+        //         // webhook_url: 'https://www.example.com/webhook'
+        //     })
+        // };
+
+        // const response = await fetch('https://api.freepik.com/v1/ai/text-to-image/flux-pro-v1-1', options);
+        // .then(res => res.json())
+        // .then(res => console.log(res))
+        // .catch(err => console.error(err));
 
         // console.log(response);
 
+
+        // const options = {
+        //     method: 'POST',
+        //     url: 'https://flux-api2.p.rapidapi.com/v1/rapid/generate/flux/image',
+        //     headers: {
+        //         'x-rapidapi-key': 'bcbeadbbb0msh11ec9a48398f4b9p16f299jsn96529e52384d',
+        //         'x-rapidapi-host': 'flux-api2.p.rapidapi.com',
+        //         'Content-Type': 'application/json'
+        //     },
+        //     data: {
+        //         model: 'flux-dev',
+        //         prompt: prompt,
+        //         guidance: 3.5,
+        //         num_outputs: 1,
+        //         aspect_ratio: '1:1',
+        //         output_format: 'png',
+        //         output_quality: 80,
+        //         prompt_strength: 0.8
+        //     }
+        // };
+
+        // const response = await axios.request(options);
+        // console.log(response.data);
+
+        const options = {
+            method: 'POST',
+            url: 'https://dall-e-34.p.rapidapi.com/v1/images/generations',
+            headers: {
+                'x-rapidapi-key': process.env.X_RAPID_API_KEY,
+                'x-rapidapi-host': 'dall-e-34.p.rapidapi.com',
+                'Content-Type': 'application/json'
+            },
+            data: {
+                prompt: `${prompt} ${negative_prompt ? 'and Do Not Include:' + negative_prompt : ''}`,
+                n: 1,
+                model: 'dall-e-3',
+                size: '1024x1024',
+                quality: 'standard'
+            }
+        };
+
+
+        const response = await axios.request(options);
+        // console.log(response.data);
+
         // const initialBase64Image = `data:image/png;base64,${imageData}`;
         // const resultImage = await convertBase64ToCovered1024(initialBase64Image);
-        const initialImage = response.data[0].url;
+        const initialImage = response.data.data[0].url;
         const resultImage = await convertUrlToCovered1024(initialImage);
 
         // console.log(resultImage);
@@ -323,9 +390,12 @@ const generateImage = async (req, res) => {
         // const image = atob(resultImage);
         // console.log(image);
 
+
+
         const updatedUser = await userModel.findByIdAndUpdate(user._id, { creditBalance: user.creditBalance - 1, numberGenerated: user.numberGenerated + 1 });
 
         res.json({ success: true, message: 'Image Generated', creditBalance: user.creditBalance - 1, numberGenerated: user.numberGenerated + 1, resultImage });
+        // res.json({ success: true, message: 'Image generated.' });
 
     } catch (error) {
         res.json({ success: false, message: error.message });

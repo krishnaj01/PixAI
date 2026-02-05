@@ -25,10 +25,10 @@ export async function convertUrlToCovered1024(imageUrl) {
 
     // Resize using "cover" to crop without quality loss
     const outputBuffer = await sharp(imgBuffer)
-        .resize(1024, 1024, {
-            fit: 'cover',
-            position: 'centre',
-        })
+        // .resize(1024, 1024, {
+        //     fit: 'cover',
+        //     position: 'centre',
+        // })
         .toFormat('png')
         .toBuffer();
 

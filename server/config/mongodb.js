@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import userModel from "../models/userModel.js";
+await import('dotenv/config');
 
 const dbURL = process.env.DB_URL || 'mongodb://127.0.0.1:27017';
 
