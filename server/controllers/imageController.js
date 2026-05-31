@@ -4,36 +4,14 @@ if (process.env.NODE_ENV !== "production") {
 
 import axios from "axios";
 import { cloudinary } from '../config/cloudinary.js'
+import { Buffer } from "node:buffer";
 
-// import { GoogleGenAI, Modality } from "@google/genai";
-// const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-
-// import Together from "together-ai";
-// const together = new Together();
+import { InferenceClient } from "@huggingface/inference";
+const hf_client = new InferenceClient(process.env.HF_TOKEN);
 
 import userModel from "../models/userModel.js";
 import imageModel from "../models/imageModel.js";
 import { convertBase64ToCovered1024, convertUrlToCovered1024 } from '../utils/convertBase64ToCovered1024.js';
-
-// import { Buffer } from 'buffer';
-// import * as tf from '@tensorflow/tfjs';
-// // import nsfw from 'nsfwjs';
-// import {createCanvas, loadImage} from 'canvas'
-
-// import fs from 'fs';
-// import NSFWFilter from 'nsfw-filter';
-// import NSFWFilter from 'nsfw-filter';
-// const nsfw = require('nsfw-filter');
-// const nsfw = await import('nsfw-filter');
-// import path from 'path';
-
-// import FormData from "form-data";
-// import OpenAI from 'openai';
-// const openai = new OpenAI({
-//     apiKey: process.env.OPENAI_API_KEY,
-// });
-
-// import { google } from 'googleapis';
 
 const checkPrompt = async (req, res) => {
     try {
@@ -42,8 +20,6 @@ const checkPrompt = async (req, res) => {
         if (!userId || !prompt) {
             return res.json({ success: false, message: 'Missing Details' });
         }
-
-        // const client = await google.discoverAPI(process.env.PERSPECTIVE_API_URL);
 
         const analyzeRequest = {
             comment: {
@@ -69,24 +45,6 @@ const checkPrompt = async (req, res) => {
             return res.json({ success: false, message: 'Inappropriate content detected. Please try again.' })
         }
         res.json({ success: true });
-
-        // client.comments.analyze({
-        //     key: process.env.GOOGLE_API_KEY_PERSPECTIVE_API,
-        //     resource: analyzeRequest,
-        // },
-        //     (err, response) => {
-        //         if(err){
-        //             return res.json({success: false, message: err});
-        //         }
-        //         const profanitySummaryScoreValue = response.data.attributeScores.PROFANITY.summaryScore.value;
-        //         const sexuallyExplicitSummaryScoreValue = response.data.attributeScores.SEXUALLY_EXPLICIT.summaryScore.value;
-
-        //         if(profanitySummaryScoreValue > 0.9 || sexuallyExplicitSummaryScoreValue > 0.8){
-        //             return res.json({success: false, message:'Inappropriate content detected. Please try again.'})
-        //         }
-        //         res.json({success: true});
-        //     }
-        // );
     } catch (error) {
         res.json({ success: false, message: error.message });
     }
@@ -153,249 +111,32 @@ const generateImage = async (req, res) => {
             return res.json({ success: false, message: 'Insufficient Credit Balance', creditBalance: user.creditBalance });
         }
 
-        // CLIPDDROP API
 
-        // const formData = new FormData();
-        // formData.append('prompt', prompt);
+        // HUGGING FACE INFERENCE API
 
-        // const {data} = await axios.post('https://clipdrop-api.co/text-to-image/v1', formData, {
-        //     headers: {
-        //         'x-api-key': process.env.CLIPDROP_API_KEY,
-        //     },
-        //     responseType: 'arraybuffer'
-        // })
+        const contents = (negative_prompt ? 'prompt: ' : '') + `${prompt}` + (negative_prompt ? `, negative prompt: ${negative_prompt}` : '');
 
-        // const base64Image = Buffer.from(data, 'binary').toString('base64');
-        // const resultImage = `data:image/png;base64,${base64Data}`;
-
-
-
-
-        // DALL-E API
-
-        // const aiResponse = await openai.images.generate({
-        //     model: 'dall-e-2',
-        //     prompt,
-        //     n: 1,
-        //     size: '1024x1024',
-        //     response_format: 'b64_json',
-        // });
-
-        // const resultImage = aiResponse.data.data[0].b64_json;
-
-        // const resp = await axios.post('https://api.deepai.org/api/text2img', {
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //         'api-key': process.env.DEEPAI_API_KEY
-        //     },
-        //     body: JSON.stringify({
-        //         text: prompt,
-        //     })
-        // });
-
-        // const resultImage = await resp.json();
-        // console.log(resultImage);
-
-
-        // HUGGING FACE API
-
-        // const data = {
-        //     inputs: prompt
-        // }
-        // const response = await fetch(
-        //     "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0",
-        //     {
-        //         headers: {
-        //             Authorization: `Bearer process.env.HUGGING_FACE_API_KEY`,
-        //             "Content-Type": "application/json",
-        //         },
-        //         method: "POST",
-        //         body: JSON.stringify(data),
-        //     }
-        // );
-        // const imageBlob = await response.blob();
-        // const resultImage = URL.createObjectURL(imageBlob);
-        // const imageURL = resultImage.replace('blob:nodedata:', 'blob:http://localhost:3000/');
-        
-        // const query = async (data) => {
-        //     const response = await fetch(
-        //         "https://router.huggingface.co/fal-ai/fal-ai/lightning-models",
-        //         {
-        //             headers: {
-        //                 Authorization: `Bearer ${process.env.HUGGING_FACE_API_KEY}`,
-        //                 "Content-Type": "application/json",
-        //             },
-        //             method: "POST",
-        //             body: JSON.stringify(data),
-        //         }
-        //     );
-        //     // const result = await response.blob();
-        //     return response;
-        // }
-
-        // const generateImage = async(prompt, negative_prompt) => {
-        //     const imageBlob = await query({
-        //         sync_mode: true,
-        //         prompt,
-        //         negative_prompt,
-        //         height: 1024,
-        //         width: 1024
-        //     });
-        //     console.log(imageBlob);
-
-        //     // Use imageBlob here (e.g., create an object URL)
-        //     // const imageURL = URL.createObjectURL(imageBlob);
-        //     // console.log(imageURL); // or display in <img src=imageURL>
-        // }
-
-        // await generateImage(prompt, negative_prompt);
-
-        // GOOGLE GEMINI API
-        // const contents = (negative_prompt ? 'prompt: ' : '') + `${prompt}` + (negative_prompt ? `, negative prompt: ${negative_prompt}` : '');
-        // const response = await ai.models.generateContent({
-        //     model: "gemini-2.0-flash-preview-image-generation",
-        //     contents: contents,
-        //     config: {
-        //     responseModalities: [Modality.TEXT, Modality.IMAGE],
-        //     },
-        //     imageGenerationConfig: {
-        //         width: 512,
-        //         height: 512,
-        //         hrScale: 2,
-        //         hrUpscalerStrength: 0.5,
-        //     },
-        // });
-
-        // let imageData;
-
-        // for (const part of response.candidates[0].content.parts) {
-        //     // Based on the part type, either show the text or save the image
-        //     if (part.inlineData) {
-        //         imageData = part.inlineData.data;
-        //     }
-        // }
-
-        // const response = await together.images.create({
-        //     model: "black-forest-labs/FLUX.1-schnell-Free",
-        //     prompt: prompt,
-        //     negative_prompt: negative_prompt,
-        //     width: 1024,
-        //     height: 1024,
-        //     guidance_scale: 9,
-        // });
-
-        // const options = {
-        //     method: 'POST',
-        //     headers: {
-        //         'x-freepik-api-key': process.env.FREEPIK_API_KEY,
-        //         'Content-Type': 'application/json'
-        //     },
-        //     body: JSON.stringify({
-        //         prompt: prompt,
-        //         prompt_upsampling: false,
-        //         // seed: 123,
-        //         aspect_ratio: 'square_1_1',
-        //         safety_tolerance: 4,
-        //         output_format: 'jpeg',
-        //         // webhook_url: 'https://www.example.com/webhook'
-        //     })
-        // };
-
-        // const response = await fetch('https://api.freepik.com/v1/ai/text-to-image/flux-pro-v1-1', options);
-        // .then(res => res.json())
-        // .then(res => console.log(res))
-        // .catch(err => console.error(err));
-
-        // console.log(response);
-
-
-        // const options = {
-        //     method: 'POST',
-        //     url: 'https://flux-api2.p.rapidapi.com/v1/rapid/generate/flux/image',
-        //     headers: {
-        //         'x-rapidapi-key': 'bcbeadbbb0msh11ec9a48398f4b9p16f299jsn96529e52384d',
-        //         'x-rapidapi-host': 'flux-api2.p.rapidapi.com',
-        //         'Content-Type': 'application/json'
-        //     },
-        //     data: {
-        //         model: 'flux-dev',
-        //         prompt: prompt,
-        //         guidance: 3.5,
-        //         num_outputs: 1,
-        //         aspect_ratio: '1:1',
-        //         output_format: 'png',
-        //         output_quality: 80,
-        //         prompt_strength: 0.8
-        //     }
-        // };
-
-        // const response = await axios.request(options);
-        // console.log(response.data);
-
-        const options = {
-            method: 'POST',
-            url: 'https://dall-e-34.p.rapidapi.com/v1/images/generations',
-            headers: {
-                'x-rapidapi-key': process.env.X_RAPID_API_KEY,
-                'x-rapidapi-host': 'dall-e-34.p.rapidapi.com',
-                'Content-Type': 'application/json'
-            },
-            data: {
-                prompt: `${prompt} ${negative_prompt ? 'and Do Not Include:' + negative_prompt : ''}`,
-                n: 1,
-                model: 'dall-e-3',
-                size: '1024x1024',
-                quality: 'standard'
+        const hf_response = await hf_client.textToImage({
+            provider: "fal-ai",
+            model: "Tongyi-MAI/Z-Image-Turbo",
+            inputs: contents,
+            parameters: {
+                image_size: {
+                    width: 1024,
+                    height: 1024
+                },
+                num_inference_steps: 5,
             }
-        };
+        });
 
-
-        const response = await axios.request(options);
-        // console.log(response.data);
-
-        // const initialBase64Image = `data:image/png;base64,${imageData}`;
-        // const resultImage = await convertBase64ToCovered1024(initialBase64Image);
-        const initialImage = response.data.data[0].url;
-        const resultImage = await convertUrlToCovered1024(initialImage);
-
-        // console.log(resultImage);
-
-        // console.log(resultImage);
-
-        // RAPID API: ImageAI-Generator
-
-        // const options = {
-        //     method: 'POST',
-        //     url: 'https://imageai-generator.p.rapidapi.com/image',
-        //     headers: {
-        //         'x-rapidapi-key': process.env.X_RAPID_API_KEY,
-        //         'x-rapidapi-host': 'imageai-generator.p.rapidapi.com',
-        //         'Content-Type': 'application/json'
-        //     },
-        //     data: {
-        //         prompt,
-        //         negative_prompt,
-        //         width: 512,
-        //         height: 512,
-        //         hr_scale: 2
-        //     }
-        // };
-
-        // const response = await axios.request(options);
-
-        // const base64Image = response.data;
-        // const resultImage = `data:image/png;base64,${base64Image}`
-
-        // converting base64 to binary image
-        // const image = atob(resultImage);
-        // console.log(image);
-
+        const imageArrayBuffer = await hf_response.arrayBuffer();
+        const base64Image = Buffer.from(imageArrayBuffer).toString("base64");
+        const resultImage = `data:image/png;base64,${base64Image}`;
 
 
         const updatedUser = await userModel.findByIdAndUpdate(user._id, { creditBalance: user.creditBalance - 1, numberGenerated: user.numberGenerated + 1 });
 
         res.json({ success: true, message: 'Image Generated', creditBalance: user.creditBalance - 1, numberGenerated: user.numberGenerated + 1, resultImage });
-        // res.json({ success: true, message: 'Image generated.' });
 
     } catch (error) {
         res.json({ success: false, message: error.message });
@@ -423,26 +164,6 @@ const getUserImages = async (req, res) => {
         res.json({ success: false, message: error.message });
     }
 }
-
-// let nsfwModel;
-
-// const checkImage = async (req, res) => {
-//     try {
-//         const { userId, image } = req.body;
-
-//         if (!userId || !image) {
-//             return res.json({ success: false, message: 'Missing Details' });
-//         }
-
-//         // if(!nsfwModel){
-//         //     // nsfwModel = await
-//         // }
-
-
-//     } catch (error) {
-//         res.json({ success: false, message: error.message });
-//     }
-// }
 
 const saveToCloudinary = async (req, res) => {
 
