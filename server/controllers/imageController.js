@@ -9,6 +9,8 @@ import { Buffer } from "node:buffer";
 import { InferenceClient } from "@huggingface/inference";
 const hf_client = new InferenceClient(process.env.HF_TOKEN);
 
+import { redisClient } from '../config/redis.js';
+
 import userModel from "../models/userModel.js";
 import imageModel from "../models/imageModel.js";
 import { convertBase64ToCovered1024, convertUrlToCovered1024 } from '../utils/convertBase64ToCovered1024.js';
@@ -145,7 +147,12 @@ const generateImage = async (req, res) => {
 
 const getCommunityImages = async (req, res) => {
     try {
+        const cachedImages = await redisClient.get('community_images');
+        if (cachedImages) {
+            return res.json({ success: true, images: JSON.parse(cachedImages) });
+        }
         const communityImages = await imageModel.find({ shared: true });
+        await redisClient.set('community_images', JSON.stringify(communityImages), 'EX', 7200); // Cache for 2 hour
         res.json({ success: true, images: communityImages });
     } catch (error) {
         res.json({ success: false, message: error.message });
@@ -158,7 +165,12 @@ const getUserImages = async (req, res) => {
         if (!userId) {
             return res.json({ success: false, message: 'Missing Details' });
         }
+        const cachedUserImages = await redisClient.get(`user_images_${userId}`);
+        if (cachedUserImages) {
+            return res.json({ success: true, images: JSON.parse(cachedUserImages) });
+        }
         const userImages = await imageModel.find({ authorId: userId });
+        await redisClient.set(`user_images_${userId}`, JSON.stringify(userImages), 'EX', 7200); // Cache for 2 hour
         res.json({ success: true, images: userImages });
     } catch (error) {
         res.json({ success: false, message: error.message });
@@ -180,70 +192,12 @@ const saveToCloudinary = async (req, res) => {
             return res.json({ success: false, message: 'Incorrect Details' });
         }
 
-        // removing the "data:image/png;base64," prefix
-        // const base64Image = image.split(",")[1];
-        // const uint8Array = new Uint8Array(atob(base64Image).split('').map(char => char.charCodeAt(0)));
-        // const uint8Array = new Uint8Array(atob(base64Image).split('').map(char => char.charCodeAt(0)));
-
-        // const blob = new Blob([uint8Array], { type: 'image/png' }); // adjust the MIME type according to your image type
-        // const file = new File([blob], 'image.png', { type: 'image/png' });
-
-        // const uploadParams = {
-        //     file,
-        //     folder: 'PixAI',
-        //     allowedFormats: ['jpeg', 'jpg', 'png']
-        // };
-
-        // const imgURL = await cloudinary.uploader.upload(uploadParams)
-
-        // // converting base64 to binary data
-        // const binaryImage = atob(base64Image);
-
-        // // The argument 'path' must be a string, Uint8Array, or URL without null bytes for cloudinary upload
-
-        // // Convert binary string to an array of bytes
-        // const bytes = Object.keys(binaryImage).length;
-        // const imageByteArrayFile = new Uint8Array(bytes);
-        // for (let i = 0; i < bytes; i++) {
-        //     imageByteArrayFile[i] = binaryImage.charCodeAt(i);
-        // }
-
-        // // The "path" argument must be of type string. Received an instance of Uint8Array
-        // // Create a Blob from the byte array
-        // const imageBlob = new Blob([imageByteArrayFile], { type: "image/png" }); // Adjust MIME type as needed (e.g., "image/jpeg")
-
-        // // Generate an object URL for the Blob
-        // const imageFile = URL.createObjectURL(imageBlob);
-
-        // const binaryImage = Buffer.from(base64Image, 'base64');
-
-        // const filename = `${userId}.png`;
-
-        // fs.writeFileSync(filename, binaryImage, (err) => {
-        //     if (err) {
-        //         console.error("Error writing file:", err);
-        //     } else {
-        //         console.log("File saved as output.png");
-        //     }
-        // });
-
-        // const imageFile = fs.readFileSync(filename);
-
-        // const formData = new FormData();
-        // formData.append("file", image);
-
-        // const imgURL = await cloudinary.uploader.upload(uint8Array, {
-        //     folder: 'PixAI',
-        //     allowedFormats: ['jpeg', 'jpg', 'png']
-        // });
-
         const img = await cloudinary.uploader.upload(image, {
             folder: 'PixAI',
             allowedFormats: ['jpeg', 'jpg', 'png']
         });
 
         const imgURL = img.secure_url;
-
 
         const newImage = await imageModel.create({
             authorId: user._id,
@@ -258,10 +212,12 @@ const saveToCloudinary = async (req, res) => {
 
         if (shared) {
             const updatedUserShared = await userModel.findByIdAndUpdate(user._id, { numberShared: user.numberShared + 1 });
+            await redisClient.del(`community_images`, `user_images_${userId}`);
             return res.json({ success: true, numberShared: user.numberShared + 1, image: newImage });
         }
 
         const updatedUserSaved = await userModel.findByIdAndUpdate(user._id, { numberSaved: user.numberSaved + 1 });
+        await redisClient.del(`user_images_${userId}`);
         res.json({ success: true, numberSaved: user.numberSaved + 1, image: newImage });
 
     } catch (error) {
@@ -300,6 +256,8 @@ const toggleShare = async (req, res) => {
             user.numberSaved -= 1;
         }
 
+        await redisClient.del(`community_images`, `user_images_${userId}`);
+
         const updatedUser = await user.save();
 
         res.json({ success: true, message: 'Status toggled successfully' });
@@ -334,6 +292,7 @@ const deleteImage = async (req, res) => {
         const sharedStatus = image.shared;
         if(sharedStatus){
             user.numberShared -= 1;
+            await redisClient.del(`community_images`);
         } else {
             user.numberSaved -= 1;
         }
@@ -342,6 +301,8 @@ const deleteImage = async (req, res) => {
         await cloudinary.uploader.destroy(filename);
         await userModel.findByIdAndUpdate(userId, { $pull: { images: imageId } });
         await imageModel.findByIdAndDelete(imageId);
+
+        await redisClient.del(`user_images_${userId}`);
 
         res.json({ success: true, message: 'Image deleted successfully' });
 

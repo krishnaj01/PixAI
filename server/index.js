@@ -3,6 +3,7 @@ import cors from 'cors'
 import cookieParser from 'cookie-parser'
 
 import connectDB from './config/mongodb.js'
+import { connectRedis } from './config/redis.js';
 
 import userRouter from './routes/userRoutes.js';
 import imageRouter from './routes/imageRoutes.js';
@@ -12,6 +13,7 @@ const app = express();
 
 const setUpApp = async (PORT) => {
     await connectDB();
+    await connectRedis();
     const frontendURL = process.env.FRONTEND_URL;
 
     app.use(express.json({ limit: '50mb' }));
