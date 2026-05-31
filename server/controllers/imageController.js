@@ -152,7 +152,7 @@ const getCommunityImages = async (req, res) => {
             return res.json({ success: true, images: JSON.parse(cachedImages) });
         }
         const communityImages = await imageModel.find({ shared: true });
-        await redisClient.set('community_images', JSON.stringify(communityImages), 'EX', 7200); // Cache for 2 hour
+        await redisClient.set('community_images', JSON.stringify(communityImages), {'EX': 7200}); // Cache for 2 hour
         res.json({ success: true, images: communityImages });
     } catch (error) {
         res.json({ success: false, message: error.message });
@@ -170,7 +170,7 @@ const getUserImages = async (req, res) => {
             return res.json({ success: true, images: JSON.parse(cachedUserImages) });
         }
         const userImages = await imageModel.find({ authorId: userId });
-        await redisClient.set(`user_images_${userId}`, JSON.stringify(userImages), 'EX', 7200); // Cache for 2 hour
+        await redisClient.set(`user_images_${userId}`, JSON.stringify(userImages), {'EX': 7200}); // Cache for 2 hour
         res.json({ success: true, images: userImages });
     } catch (error) {
         res.json({ success: false, message: error.message });
@@ -212,12 +212,12 @@ const saveToCloudinary = async (req, res) => {
 
         if (shared) {
             const updatedUserShared = await userModel.findByIdAndUpdate(user._id, { numberShared: user.numberShared + 1 });
-            await redisClient.del(`community_images`, `user_images_${userId}`);
+            await redisClient.del(['community_images', `user_images_${userId}`]);
             return res.json({ success: true, numberShared: user.numberShared + 1, image: newImage });
         }
 
         const updatedUserSaved = await userModel.findByIdAndUpdate(user._id, { numberSaved: user.numberSaved + 1 });
-        await redisClient.del(`user_images_${userId}`);
+        await redisClient.del([`user_images_${userId}`]);
         res.json({ success: true, numberSaved: user.numberSaved + 1, image: newImage });
 
     } catch (error) {
@@ -256,7 +256,7 @@ const toggleShare = async (req, res) => {
             user.numberSaved -= 1;
         }
 
-        await redisClient.del(`community_images`, `user_images_${userId}`);
+        await redisClient.del(['community_images', `user_images_${userId}`]);
 
         const updatedUser = await user.save();
 
@@ -292,7 +292,7 @@ const deleteImage = async (req, res) => {
         const sharedStatus = image.shared;
         if(sharedStatus){
             user.numberShared -= 1;
-            await redisClient.del(`community_images`);
+            await redisClient.del(['community_images']);
         } else {
             user.numberSaved -= 1;
         }
@@ -302,7 +302,7 @@ const deleteImage = async (req, res) => {
         await userModel.findByIdAndUpdate(userId, { $pull: { images: imageId } });
         await imageModel.findByIdAndDelete(imageId);
 
-        await redisClient.del(`user_images_${userId}`);
+        await redisClient.del(['user_images_${userId}', 'community_images']);
 
         res.json({ success: true, message: 'Image deleted successfully' });
 
