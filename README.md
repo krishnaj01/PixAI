@@ -31,13 +31,13 @@ https://pixai-image-generation.onrender.com/
 ## 🛠️ Tech Stack
 - **Frontend:** React.js, HTML5, CSS3, Tailwind CSS
 - **Backend:** Node.js, Express.js
-- **Database:** MongoDB Atlas
-- **APIs:** RESTful API design, Cloudinary, Nodemailer, Brevo SMTP, Rapid API, Razorpay, Perspective API
-- **Hosting:** Render
+- **Database:** MongoDB Atlas, Redis
+- **APIs:** RESTful API design, Cloudinary, Nodemailer, Brevo SMTP, Hugging Face, Rapid API, Razorpay, Perspective API
+- **Hosting:** Render, Upstash
 
-*Rapid API (https://rapidapi.com/) - using two API's from here:*
-1. ImageAI-Generator
-2. NSFW images detection and classification
+*Hugging Face (https://huggingface.co/):* **Image AI Generator**
+
+*Rapid API (https://rapidapi.com/):* **NSFW images detection and classification**
 
 ## 📂 Project Structure
 The project is divided into two main parts: the client (frontend) and the server (backend).
@@ -81,6 +81,7 @@ npm install
 
 ```
 DB_URL=<your-mongodb-connection-string>
+REDIS_URL=<your-redis-db-url>
 SIGNED_COOKIE_SECRET=<your-signed-cookie-secret>
 JWT_SECRET=<your-jwt-secret>
 FRONTEND_URL='http://localhost:5173'
@@ -94,7 +95,7 @@ SMTP_PASSWORD=<your-smtp-password>
 SMTP_SENDER_EMAIL=<your-smtp-sender-email>
 
 X_RAPID_API_KEY=<your-x-rapid-api-key>
-
+HF_TOKEN=<your-hugging-face-token>
 GOOGLE_API_KEY_PERSPECTIVE_API=<your-google-api-key-perspective-api>
 PERSPECTIVE_API_URL='https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze'
 
