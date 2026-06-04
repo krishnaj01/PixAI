@@ -152,7 +152,7 @@ const getCommunityImages = async (req, res) => {
             return res.json({ success: true, images: JSON.parse(cachedImages) });
         }
         const communityImages = await imageModel.find({ shared: true });
-        await redisClient.set('community_images', JSON.stringify(communityImages), {'EX': 7200}); // Cache for 2 hour
+        await redisClient.set('community_images', JSON.stringify(communityImages)); // Cache without expiration
         res.json({ success: true, images: communityImages });
     } catch (error) {
         res.json({ success: false, message: error.message });
@@ -170,7 +170,7 @@ const getUserImages = async (req, res) => {
             return res.json({ success: true, images: JSON.parse(cachedUserImages) });
         }
         const userImages = await imageModel.find({ authorId: userId });
-        await redisClient.set(`user_images_${userId}`, JSON.stringify(userImages), {'EX': 7200}); // Cache for 2 hour
+        await redisClient.set(`user_images_${userId}`, JSON.stringify(userImages)); // Cache without expiration
         res.json({ success: true, images: userImages });
     } catch (error) {
         res.json({ success: false, message: error.message });
@@ -302,7 +302,7 @@ const deleteImage = async (req, res) => {
         await userModel.findByIdAndUpdate(userId, { $pull: { images: imageId } });
         await imageModel.findByIdAndDelete(imageId);
 
-        await redisClient.del(['user_images_${userId}', 'community_images']);
+        await redisClient.del([`user_images_${userId}`]);
 
         res.json({ success: true, message: 'Image deleted successfully' });
 
